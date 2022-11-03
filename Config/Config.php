@@ -46,10 +46,10 @@
 	const DIRECCION = "Avenida las Américas Zona 13, Guatemala";
 	const TELEMPRESA = "+(502)78787845";
 	const WHATSAPP = "+50278787845";
-	const EMAIL_EMPRESA = "info@abelosh.com";
-	const EMAIL_PEDIDOS = "info@abelosh.com"; 
-	const EMAIL_SUSCRIPCION = "info@abelosh.com";
-	const EMAIL_CONTACTO = "info@abelosh.com";
+	const EMAIL_EMPRESA = "gerlopez.21@hotmail.com";
+	const EMAIL_PEDIDOS = "gerlopez.21@hotmail.com"; 
+	const EMAIL_SUSCRIPCION = "gerlopez.21@hotmail.com";
+	const EMAIL_CONTACTO = "gerlopez.21@hotmail.com";
 
 	const CAT_SLIDER = "1,2,3";
 	const CAT_BANNER = "4,5,6";
