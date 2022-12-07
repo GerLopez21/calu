@@ -24,12 +24,26 @@
 				header("Location: ".base_url());
 				die();
 			}
-
+			
 			$data['page_tag'] = NOMBRE_EMPESA.' - Procesar Pago';
-			$data['page_title'] = 'Procesar Pago';
-			$data['page_name'] = "procesarpago";
+			$data['page_title'] = 'Procesar envio';
+			$data['page_name'] = "procesarenvio";
 			$data['tiposPago'] = $this->getTiposPagoT();
 			$this->views->getView($this,"procesarpago",$data); 
+		}
+		public function confirmarpago()
+		{
+			if(empty($_SESSION['arrCarrito'])){ 
+				header("Location: ".base_url());
+				die();
+			}
+
+			$data['page_tag'] = NOMBRE_EMPESA.' - Confirmar Pago';
+			$data['page_title'] = 'Confirmar Pago';
+			$data['page_name'] = "confirmarpago";
+			$data['tiposPago'] = $this->getTiposPagoT();
+			$date['idPedido'] = $_SESSION['idPedido'];
+			$this->views->getView($this,"confirmarpago",$data); 
 		}
 
 	}

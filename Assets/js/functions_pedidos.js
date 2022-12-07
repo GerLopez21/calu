@@ -11,11 +11,13 @@ tablePedidos = $('#tablePedidos').dataTable( {
         "dataSrc":""
     },
     "columns":[
-        {"data":"idpedido"},
-        {"data":"transaccion"},
+        {"data":"nombre_cliente"},
+        {"data":"tipopago"},
         {"data":"fecha"},
         {"data":"monto"},
-        {"data":"tipopago"},
+        {"data":"direccion_envio"},
+        {"data":"tipo_envio"},
+        {"data":"telefono_cliente"},     
         {"data":"status"},
         {"data":"options"}
     ],

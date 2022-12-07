@@ -7,9 +7,11 @@ headerTienda($data);
   <p class="lead">Tu pedido fue procesado con éxito.</p>
   <p>No. Orden: <strong> <?= $data['orden']; ?> </strong></p>
   	<?php 
-  		if(!empty($data['transaccion'])){
+  		if($data['tipopago'] == "acordar"){
     ?>
-    <p>Transacción: <strong> <?= $data['transaccion']; ?> </strong></p>
+    <p>Transacción: <strong> <?= $data['tipopago']; ?> </strong></p>
+   <?php }else{ ?>
+   <p>Transacción: <strong> <?= $data['tipopago']; ?> </strong></p>
    <?php } ?>
   <hr class="my-4">
   <p>Muy pronto estaremos en contacto para coordinar la entrega.</p>

@@ -84,7 +84,7 @@
 	const PSUCURSALES = 8;
 	const PERROR = 9;
 
-	//Roles
+	//Roles 
 	const RADMINISTRADOR = 1;
 	const RSUPERVISOR = 2;
 	const RCLIENTES = 3;
@@ -98,8 +98,8 @@
 	const PROBUSCAR = 4;
 
 	//REDES SOCIALES
-	const FACEBOOK = "https://www.facebook.com/abelosh";
-	const INSTAGRAM = "https://www.instagram.com/febel24/";
+	const FACEBOOK = "https://www.facebook.com/calu";
+	const INSTAGRAM = "https://www.instagram.com/calu.mendoza//";
 	
 
  ?>

@@ -146,7 +146,17 @@ trait TProducto{
 						c.ruta as ruta_categoria,
 						p.precio,
 						p.ruta,
-						p.stock
+						p.stock,
+						p.stocktalle1,
+						p.stocktalle2,
+						p.stocktalle3,
+						p.stocktalle4,
+						p.stocktalle5,
+						p.stocktalle6,
+						p.stocktalle7,
+						p.stocktalle8,
+						p.preciodescuento
+
 				FROM producto p 
 				INNER JOIN categoria c
 				ON p.categoriaid = c.idcategoria
@@ -228,7 +238,15 @@ trait TProducto{
 						c.nombre as categoria,
 						p.precio,
 						p.ruta,
-						p.stock
+						p.stock,
+						p.stocktalle1,
+						p.stocktalle2,
+						p.stocktalle3,
+						p.stocktalle4,
+						p.stocktalle5,
+						p.stocktalle6,
+						p.stocktalle7,
+						p.stocktalle8
 				FROM producto p 
 				INNER JOIN categoria c
 				ON p.categoriaid = c.idcategoria

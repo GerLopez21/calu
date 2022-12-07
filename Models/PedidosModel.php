@@ -9,21 +9,23 @@
 
 		public function selectPedidos($idpersona = null){
 			$where = "";
-			if($idpersona != null){
-				$where = " WHERE p.personaid = ".$idpersona;
-			}
+			
 			$sql = "SELECT p.idpedido,
-							p.referenciacobro,
-							p.idtransaccionpaypal,
+	
 							DATE_FORMAT(p.fecha, '%d/%m/%Y') as fecha,
 							p.monto,
-							tp.tipopago,
-							tp.idtipopago,
+							p.tipopago,
+							p.tipo_envio,
+							p.nombre_cliente,
+							p.apellido_cliente,
+							p.dni_cliente,
+							p.telefono_cliente,
+							p.direccion_envio,
 							p.status 
 					FROM pedido p 
-					INNER JOIN tipopago tp
-					ON p.tipopagoid = tp.idtipopago $where ";
+					";
 			$request = $this->select_all($sql);
+	
 			return $request;
 
 		}	
@@ -34,21 +36,21 @@
 				$busqueda = " AND p.personaid =".$idpersona;
 			}
 			$request = array();
-			$sql = "SELECT p.idpedido,
-							p.referenciacobro,
-							p.idtransaccionpaypal,
-							p.personaid,
+		$sql = "SELECT p.idpedido,
+	
 							DATE_FORMAT(p.fecha, '%d/%m/%Y') as fecha,
-							p.costo_envio,
 							p.monto,
-							p.tipopagoid,
-							t.tipopago,
+							p.tipopago,
+							p.tipo_envio,
+							p.nombre_cliente,
+							p.apellido_cliente,
+							p.dni_cliente,
+							p.telefono_cliente,
 							p.direccion_envio,
-							p.status
-					FROM pedido as p
-					INNER JOIN tipopago t
-					ON p.tipopagoid = t.idtipopago
-					WHERE p.idpedido =  $idpedido ".$busqueda;
+							p.status 
+					FROM pedido p 
+					";
+					print_r($sql);die;
 			$requestPedido = $this->select($sql);
 			if(!empty($requestPedido)){
 				$idpersona = $requestPedido['personaid'];
@@ -134,14 +136,15 @@
 			}
 		}
 
-		public function updatePedido(int $idpedido, $transaccion = NULL, $idtipopago = NULL, string $estado){
+		public function updatePedido(int $idpedido, int $monto = NULL, $transaccion = NULL, $tipopago = NULL, string $estado){
 			if($transaccion == NULL){
-				$query_insert  = "UPDATE pedido SET status = ?  WHERE idpedido = $idpedido ";
-	        	$arrData = array($estado);
+				$query_insert  = "UPDATE pedido SET tipopago = ?,monto = ?, status = ?  WHERE idpedido = $idpedido ";
+
+	        	$arrData = array($tipopago, $monto, $estado);
 			}else{
 				$query_insert  = "UPDATE pedido SET referenciacobro = ?, tipopagoid = ?,status = ? WHERE idpedido = $idpedido";
 	        	$arrData = array($transaccion,
-	        					$idtipopago,
+	        					$tipopago,
 	    						$estado
 	    					);
 			}

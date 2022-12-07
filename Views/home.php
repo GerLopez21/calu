@@ -123,6 +123,9 @@
 								<span class="stext-105 cl3">
 									<?= SMONEY.formatMoney($arrProductos[$p]['precio']); ?>
 								</span>
+								<?php if ($arrProductos[$p]['stock'] < 10){
+										?>Quedan pocos <?php
+									} ?>
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">

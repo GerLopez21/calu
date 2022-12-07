@@ -1,65 +1,42 @@
 <?php 
 headerTienda($data);
 
+// SDK de Mercado Pago
+require './vendor/autoload.php';
+$productos="";
 $subtotal = 0;
 $total = 0;
 foreach ($_SESSION['arrCarrito'] as $producto) {
 	$subtotal += $producto['precio'] * $producto['cantidad'];
+	//$arrProductos=array();
+	//array_push($arrProductos,$producto['producto']);
+	$productos = $producto['producto']."".$productos;
 }
 $total = $subtotal + COSTOENVIO;
+$ACCESS_TOKEN='TEST-920054571392136-111417-c144e04d1b1c4a75bc8941d7b7aa2219-213297333';
 
-$tituloTerminos = !empty(getInfoPage(PTERMINOS)) ? getInfoPage(PTERMINOS)['titulo'] : "";
-$infoTerminos = !empty(getInfoPage(PTERMINOS)) ? getInfoPage(PTERMINOS)['contenido'] : "";
+// Agrega credenciales
+try {
+	MercadoPago\SDK::setAccessToken($ACCESS_TOKEN);
+	$preference = new MercadoPago\Preference();
+$item = new MercadoPago\Item();
+$item->id = $producto['idproducto'];
+$item->title =  $productos;
+$item->description = $producto['producto'];
+$item->quantity = $producto['cantidad'];
+$item->unit_price = $total;
+$preference->items = array($item);
+$preference->save();
+}catch(Throwable $e){
+	print_r($e);die();
+	}
 
 ?>
+
 <script
-    src="https://www.paypal.com/sdk/js?client-id=<?= IDCLIENTE ?>&currency=<?= CURRENCY ?>">
+	src="https://sdk.mercadopago.com/js/v2">
 </script>
-<script>
-  paypal.Buttons({
-    createOrder: function(data, actions) {
-      return actions.order.create({
-        purchase_units: [{
-          amount: {
-            value: <?= $total; ?>
-          },
-          description: "Compra de artículos en <?= NOMBRE_EMPESA ?> por <?= SMONEY.$total ?> ",
-        }]
-      });
-    },
-    onApprove: function(data, actions) {
-      // This function captures the funds from the transaction.
-      return actions.order.capture().then(function(details) {
-      		let base_url = "<?= base_url(); ?>";
-	        let dir = document.querySelector("#txtDireccion").value;
-	        let ciudad = document.querySelector("#txtCiudad").value;
-	        let inttipopago = 1; 
-	        let request = (window.XMLHttpRequest) ? 
-	                    new XMLHttpRequest() : 
-	                    new ActiveXObject('Microsoft.XMLHTTP');
-			let ajaxUrl = base_url+'/Tienda/procesarVenta';
-			let formData = new FormData();
-		    formData.append('direccion',dir);    
-		   	formData.append('ciudad',ciudad);
-			formData.append('inttipopago',inttipopago);
-		   	formData.append('datapay',JSON.stringify(details));
-		   	request.open("POST",ajaxUrl,true);
-		    request.send(formData);
-		    request.onreadystatechange = function(){
-		    	if(request.readyState != 4) return;
-		    	if(request.status == 200){
-		    		let objData = JSON.parse(request.responseText);
-		    		if(objData.status){
-		    			window.location = base_url+"/tienda/confirmarpedido/";
-		    		}else{
-		    			swal("", objData.msg , "error");
-		    		}
-		    	}
-		    }
-      });
-    }
-  }).render('#paypal-btn-container');
-</script>
+
 
 <!-- Modal -->
 <div class="modal fade" id="modalTerminos" tabindex="-1" aria-hidden="true">
@@ -103,75 +80,124 @@ $infoTerminos = !empty(getInfoPage(PTERMINOS)) ? getInfoPage(PTERMINOS)['conteni
 			<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
 				<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-l-25 m-r--38 m-lr-0-xl">
 					<div>
-					<?php 
-						if(isset($_SESSION['login'])){
-					?>
+					
 						<div>
-							<label for="tipopago">Dirección de envío</label>
-							<div class="bor8 bg0 m-b-12">
-								<input id="txtDireccion" class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="Dirección de envío">
-							</div>
-							<div class="bor8 bg0 m-b-22">
-								<input id="txtCiudad" class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="postcode" placeholder="Ciudad / Estado">
-							</div>
-						</div>
-					<?php }else{ ?>
+									<label >
+										<input type="radio" checked="" class="opcionEnvio" id="retiro" name="retiro" value="retiro">
+										<i class="zmdi zmdi-local-store"></i>
 
-						<ul class="nav nav-tabs" id="myTab" role="tablist">
-						  <li class="nav-item">
-						    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#login" role="tab" aria-controls="home" aria-selected="true">Iniciar Sesión</a>
-						  </li>
-						  <li class="nav-item">
-						    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#registro" role="tab" aria-controls="profile" aria-selected="false">Crear cuenta</a>
-						  </li>
-						</ul>
-						<div class="tab-content" id="myTabContent">
-						  <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="home-tab">
-						  	<br>
-						  	<form id="formLogin">
-							  <div class="form-group">
-							    <label for="txtEmail">Usuario</label>
-							    <input type="email" class="form-control" id="txtEmail" name="txtEmail">
-							  </div>
-							  <div class="form-group">
-							    <label for="txtPassword">Contraseña</label>
-							    <input type="password" class="form-control" id="txtPassword" name="txtPassword">
-							  </div>
-							  <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-							</form>
+										<span><b>Retiro en el local</b></span><br>
+										<span>El retiro en el local puede ser realizado, los días... <br>En caso de 
+									 	optar por esta opción, una vez que hayas realizado la compra, nos pondremos en contacto
+										con vos para informarte la dirección y acordar el retiro</span>
 
-						  </div>
-						  <div class="tab-pane fade" id="registro" role="tabpanel" aria-labelledby="profile-tab">
-						  	<br>
-						  	<form id="formRegister"> 
-						 		<div class="row">
-									<div class="col col-md-6 form-group">
-										<label for="txtNombre">Nombres</label>
-										<input type="text" class="form-control valid validText" id="txtNombre" name="txtNombre" required="">
-									</div>
-									<div class="col col-md-6 form-group">
-										<label for="txtApellido">Apellidos</label>
-										<input type="text" class="form-control valid validText" id="txtApellido" name="txtApellido" required="">
-									</div>
-						 		</div>
-						 		<div class="row">
-									<div class="col col-md-6 form-group">
-										<label for="txtTelefono">Teléfono</label>
-										<input type="text" class="form-control valid validNumber" id="txtTelefono" name="txtTelefono" required="" onkeypress="return controlTag(event);">
-									</div>
-									<div class="col col-md-6 form-group">
-										<label for="txtEmailCliente">Email</label>
-										<input type="email" class="form-control valid validEmail" id="txtEmailCliente" name="txtEmailCliente" required="">
-									</div>
-						 		</div>
-								<button type="submit" class="btn btn-primary">Regístrate</button>
-						 	</form>
-						  </div>
-						</div>
-
-					<?php } ?>
+									</label>
+								</div>
+								<b>-------------------------------------</b>
+								<div>
+									<label>
+										<input type="radio" id="entrelocal" class="opcionEnvio" name="entrelocal" value="entrelocal">
+										<i class="zmdi zmdi-local-shipping"></i>
+										<span><b>Envio a domicilio</b></span>
+										<span>El retiro en el local puede ser realizado, los días... <br>En caso de 
+									 	optar por esta opción, una vez que hayas realizado la compra, nos pondremos en contacto
+										con vos para informarte la dirección y acordar el retiro</span>
+									</label>
+								</div>
+								<b>-------------------------------------</b>
+								<div>
+									<label>
+										<input type="radio" id="centro" class="opcionEnvio" name="centro" value="centro">
+										<i class="zmdi zmdi-pin"></i>
+										<span><b>Retiro en centro</span></b><br>
+										<span>En esta caso los horarios de retiro son...</span>
+										<span>El retiro en el local puede ser realizado, los días... <br>En caso de 
+									 	optar por esta opción, una vez que hayas realizado la compra, nos pondremos en contacto
+										con vos para informarte la dirección y acordar el retiro</span>
+									</label>
+								</div>
+					
 					</div>
 				</div>
+				<br>
+				<div id="datosFact" class="notblock">
+				<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-l-25 m-r--38 m-lr-0-xl">
+	<form id='formDatos'>
+		<div class="panel-with-header">
+			<h3 class="panel-header panel-header-sticky">DATOS DE CONTACTO</h3><br>
+			<div class="form-group ">
+				<div class="has-float-label">
+    				<input type="email" class="form-control" id="txtEmail" name="txtEmail" placeholder="Email">
+				</div>
+   			</div>	
+		
+		<h3>DATOS DE FACTURACIÓN</h3>
+  <div class="form-row">
+	<br><br>
+  	<div class="form-group col-md-6">
+		<br>
+      <select id="txtPais" class="form-control">
+        <option selected>Argentina</option>
+        <option>...</option>
+      </select>
+    </div>	
+	<div class="form-group col-md-6">
+	<br>
+
+      <input type="number" class="form-control" id="txtDni" name="txtDni" placeholder="DNI o CUIL">
+    </div>
+   
+  </div>
+  <h5>Persona que pagará el pedido</h5>
+  <div class="form-row">
+  <div class="form-group col-md-6">
+	<br>
+    <input type="text" class="form-control" id="txtNombre" name="txtNombre" placeholder="Nombre">
+    </div>	
+	<div class="form-group col-md-6">
+	<br>
+    <input type="text" class="form-control" id="txtApellido" name="txtApellido" placeholder="Apellido">
+    </div>
+	<div class="form-group col-md-6">
+    <input type="tel" class="form-control" id="txtTelefono" name="txtTelefono" placeholder="Telefono">
+    </div>
+  </div>
+  <h5>Domicilio de la persona que pagará el pedido</h5>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input type="text" class="form-control" id="txtCalle" name="txtCalle" placeholder="Calle">
+    </div>
+	<div class="form-group col-md-6">
+      <input type="tel" class="form-control" id="txtNumero" name="txtNumero" placeholder="Numero">
+    </div>
+	</div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <input type="text" class="form-control" id="txtBarrio" name="txtBarrio" placeholder="Barrio(Opcional)">
+    </div>
+	<div class="form-group col-md-6">
+      <input type="text" class="form-control" id="txtCiudad" name="txtCiudad" placeholder="Ciudad">
+    </div>
+	</div>
+	<div class="form-row">
+    <div class="form-group col-md-6">
+      <input type="tel" class="form-control" id="txtCP" name="txtCP" placeholder="Codigo postal">
+    </div>
+	<div class="form-group col-md-6">
+      <input type="text" class="form-control" id="txtProvincia" name="txtProvincia" placeholder="Provincia">
+    </div>
+	</div>
+  
+</div>
+<div id="optMetodoPago">	
+							<hr>					
+							
+							<button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Continuar al pago</span></button>&nbsp;&nbsp;&nbsp;
+
+	</div></form>
+	</div>
+					</div>
 			</div>
 
 			<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
@@ -219,64 +245,15 @@ $infoTerminos = !empty(getInfoPage(PTERMINOS)) ? getInfoPage(PTERMINOS)['conteni
 						</div>
 					</div>
 					<hr>
-<?php 
-	if(isset($_SESSION['login'])){
-?>
-					<div id="divMetodoPago" class="notblock">
+
+<div id="divMetodoPago" class="notblock">
 						<div id="divCondiciones">
 							<input type="checkbox" id="condiciones" >
 							<label for="condiciones"> Aceptar </label>
 							<a href="#" data-toggle="modal" data-target="#modalTerminos" > Términos y Condiciones </a>
-						</div>
-						<div id="optMetodoPago" class="notblock">	
-							<hr>					
-							<h4 class="mtext-109 cl2 p-b-30">
-								Método de pago
-							</h4>
-							<div class="divmetodpago">
-								<div>
-									<label for="paypal">
-										<input type="radio" id="paypal" class="methodpago" name="payment-method" checked="" value="Paypal">
-										<img src="<?= media()?>/images/img-paypal.jpg" alt="Icono de PayPal" class="ml-space-sm" width="74" height="20">
-									</label>
-								</div>
-								<div>
-									<label for="contraentrega">
-										<input type="radio" id="contraentrega" class="methodpago" name="payment-method" value="CT">
-										<span>Contra Entrega</span>
-									</label>
-								</div>
-								<div id="divtipopago" class="notblock" >
-									<label for="listtipopago">Tipo de pago</label>
-									<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-										<select id="listtipopago" class="js-select2" name="listtipopago">
-										<?php 
-											if(count($data['tiposPago']) > 0){ 
-												foreach ($data['tiposPago'] as $tipopago) {
-													if($tipopago['idtipopago'] != 1){
-										 ?>
-										 	<option value="<?= $tipopago['idtipopago']?>"><?= $tipopago['tipopago']?></option>
-										<?php
-													}
-												}
-										 } ?>
-										</select>
-										<div class="dropDownSelect2"></div>
-									</div>
-									<br>
-									<button type="submit" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Procesar pedido</button>
-								</div>
-								<div id="divpaypal">
-									<div>
-										<p>Para completar la transacción, te enviaremos a los servidores seguros de PayPal.</p>
-									</div>
-									<br>
-									<div id="paypal-btn-container"></div>
-								</div>
-							</div>
-						</div>
-					</div>			
-<?php } ?>
+						</div>	
+	</div>
+	
 				</div>
 			</div>
 		</div>

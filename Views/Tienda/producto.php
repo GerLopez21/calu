@@ -5,6 +5,7 @@ $arrProductos = $data['productos'];
 $arrImages = $arrProducto['images']; 
 $rutacategoria = $arrProducto['categoriaid'].'/'.$arrProducto['ruta_categoria'];
 $urlShared = base_url()."/tienda/producto/".$arrProducto['idproducto']."/".$arrProducto['ruta'];
+$asd = "disabled";
  ?>
 <br><br><br>
 <hr>
@@ -69,9 +70,10 @@ $urlShared = base_url()."/tienda/producto/".$arrProducto['idproducto']."/".$arrP
 						<?= $arrProducto['descripcion']; ?>
 						<!--  -->
 						<div class="p-t-33">
-							<div class="flex-w flex-r-m p-b-10">
-								<div class="size-204 flex-w flex-m respon6-next">
-									<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+						<div class="form-group col-xl">
+
+						<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+							
 										<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
 											<i class="fs-16 zmdi zmdi-minus"></i>
 										</div>
@@ -82,14 +84,77 @@ $urlShared = base_url()."/tienda/producto/".$arrProducto['idproducto']."/".$arrP
 											<i class="fs-16 zmdi zmdi-plus"></i>
 										</div>
 									</div>
+                            <div class="form-group col-bg">
+                                <label for="listTalles">Seleccione los talles</label>
+								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
+								<select id="listTalles" class="js-select2" name="listTalles">
+									
+											<?php if($arrProducto['stocktalle1'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle1']?>" disabled><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
+											<?php }else{?>
+												<option value="85"><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
+											<?php } ?>
+											<?php if($arrProducto['stocktalle2'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle2']?>" disabled><?="Talle 90              Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
+											<?php }else{?>
+												<option value="90"><?="Talle 90               Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
 
+											<?php } ?>
+											<?php if($arrProducto['stocktalle3'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle3']?>" disabled><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
+											<?php }else{?>
+												<option value="95"><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
+
+											<?php } ?>
+											<?php if($arrProducto['stocktalle4'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle4']?>" disabled><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
+											<?php }else{?>
+												<option value="100"><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
+
+											<?php } ?>
+											<?php if($arrProducto['stocktalle5'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle5']?>" disabled><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
+											<?php }else{?>
+												<option value="105"><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
+
+											<?php } ?>
+											<?php if($arrProducto['stocktalle6'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle6']?>" disabled><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
+											<?php }else{?>
+												<option value="110"><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
+
+											<?php } ?>
+											<?php if($arrProducto['stocktalle7'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle7']?>" disabled><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
+											<?php }else{?>
+												<option value="115"><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
+
+											<?php } ?>
+											<?php if($arrProducto['stocktalle8'] <= 0){ ?>
+										 	<option value="<?= $arrProducto['stocktalle8']?>" disabled><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
+											<?php }else{?>
+												<option value="120"><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
+
+											<?php } ?>
+										 	
+
+                                </select>
+								<div class="dropDownSelect2"></div>
+							</div>	
+                            </div>
+							  
+							</div>
+                
 									<button id="<?= openssl_encrypt($arrProducto['idproducto'],METHODENCRIPT,KEY); ?>" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
 										Agregar al carrito
 									</button>
-								</div>
-							</div>	
+									
+									</div>			
+							
+							
 						</div>
 						<!--  -->
+						
 						<div class="flex-w flex-m p-l-100 p-t-40 respon7">
 							<div class="flex-m bor9 p-r-10 m-r-11">
 								Compartir en:

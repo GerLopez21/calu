@@ -59,7 +59,7 @@
 
 		public function setProducto(){
 			if($_POST){
-				if(empty($_POST['txtNombre']) || empty($_POST['txtCodigo']) || empty($_POST['listCategoria']) || empty($_POST['txtPrecio']) || empty($_POST['listStatus']) )
+				if(empty($_POST['txtNombre']) || empty($_POST['listCategoria']) || empty($_POST['txtPrecio']) || empty($_POST['listStatus']) )
 				{
 					$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 				}else{
@@ -67,10 +67,17 @@
 					$idProducto = intval($_POST['idProducto']);
 					$strNombre = strClean($_POST['txtNombre']);
 					$strDescripcion = strClean($_POST['txtDescripcion']);
-					$strCodigo = strClean($_POST['txtCodigo']);
 					$intCategoriaId = intval($_POST['listCategoria']);
 					$strPrecio = strClean($_POST['txtPrecio']);
 					$intStock = intval($_POST['txtStock']);
+					$intStock1 = intval($_POST['txtStock1']);
+					$intStock2 = intval($_POST['txtStock2']);
+					$intStock3 = intval($_POST['txtStock3']);
+					$intStock4 = intval($_POST['txtStock4']);
+					$intStock5 = intval($_POST['txtStock5']);
+					$intStock6 = intval($_POST['txtStock6']);
+					$intStock7 = intval($_POST['txtStock7']);
+					$intStock8 = intval($_POST['txtStock8']);
 					$intStatus = intval($_POST['listStatus']);
 					$request_producto = "";
 
@@ -83,12 +90,19 @@
 						if($_SESSION['permisosMod']['w']){
 							$request_producto = $this->model->insertProducto($strNombre, 
 																		$strDescripcion, 
-																		$strCodigo, 
 																		$intCategoriaId,
 																		$strPrecio, 
-																		$intStock, 
+																		$intStock,
+																		$intStock1,
+																		$intStock2,
+																		$intStock3,
+																		$intStock4,
+																		$intStock5,
+																		$intStock6,
+																		$intStock7,
+																		$intStock8, 
 																		$ruta,
-																		$intStatus );
+																		$intStatus);
 						}
 					}else{
 						$option = 2;
@@ -96,12 +110,20 @@
 							$request_producto = $this->model->updateProducto($idProducto,
 																		$strNombre,
 																		$strDescripcion, 
-																		$strCodigo, 
 																		$intCategoriaId,
 																		$strPrecio, 
-																		$intStock, 
+																		$intStock,
+																		$intStock1,
+																		$intStock2,
+																		$intStock3,
+																		$intStock4,
+																		$intStock5,
+																		$intStock6,
+																		$intStock7,
+																		$intStock8,  
 																		$ruta,
-																		$intStatus);
+																		$intStatus
+																	);
 						}
 					}
 					if($request_producto > 0 )

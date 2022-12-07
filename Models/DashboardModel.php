@@ -45,11 +45,8 @@
 				$where = " WHERE p.personaid = ".$idUser;
 			}
 
-			$sql = "SELECT p.idpedido, CONCAT(pr.nombres,' ',pr.apellidos) as nombre, p.monto, p.status 
+			$sql = "SELECT p.idpedido, p.nombre_cliente as nombre, p.monto, p.status 
 					FROM pedido p
-					INNER JOIN persona pr
-					ON p.personaid = pr.idpersona
-					$where
 					ORDER BY p.idpedido DESC LIMIT 10 ";
 			$request = $this->select_all($sql);
 			return $request;
@@ -83,16 +80,19 @@
 				$fechaVenta = date_format($date,"Y-m-d");
 				$sql = "SELECT DAY(fecha) AS dia, COUNT(idpedido) AS cantidad, SUM(monto) AS total 
 						FROM pedido 
-						WHERE DATE(fecha) = '$fechaVenta' AND status = 'Completo' ".$where;
+						WHERE DATE(fecha) = '$fechaVenta' AND status = 'pendiente' ";
 				$ventaDia = $this->select($sql);
 				$ventaDia['dia'] = $n_dia;
 				$ventaDia['total'] = $ventaDia['total'] == "" ? 0 : $ventaDia['total'];
 				$totalVentasMes += $ventaDia['total'];
 				array_push($arrVentaDias, $ventaDia);
+
 				$n_dia++;
 			}
+
 			$meses = Meses();
 			$arrData = array('anio' => $anio, 'mes' => $meses[intval($mes-1)], 'total' => $totalVentasMes,'ventas' => $arrVentaDias );
+
 			return $arrData;
 		}
 		public function selectVentasAnio(int $anio){

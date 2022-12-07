@@ -11,6 +11,8 @@ trait TCliente{
 	private $strToken;
 	private $intTipoId;
 	private $intIdTransaccion;
+	private $intIdProducto;
+	private $intCantidad;
 
 	public function insertCliente(string $nombre, string $apellido, int $telefono, string $email, string $password, int $tipoid){
 		$this->con = new Mysql();
@@ -61,7 +63,28 @@ trait TCliente{
 	    $return = $request_insert;
 	    return $return;
 	}
-
+	public function insertPedidoEnvio(string $tipoenvio, string $email, int $dni, string $pais, string $nombre, int $telefono, string $direccion, string $barrio, string $ciudad,int $codigopostal, string $provincia,string $status){
+		$this->con = new Mysql();
+		$query_insert  = "INSERT INTO pedido(tipo_envio,email_cliente,dni_cliente,pais_cliente,nombre_cliente,telefono_cliente,
+		direccion_envio,barrio_cliente,ciudad_cliente,codigo_postal,provincia_cliente,status) 
+							  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+		$arrData = array($tipoenvio,
+    						$email,
+    						$dni,
+    						$pais,
+    						$nombre,
+							$telefono,
+    						$direccion,
+    						$barrio,
+							$ciudad,
+							$codigopostal,
+							$provincia,
+							$status
+    					);
+		$request_insert = $this->con->insert($query_insert,$arrData);
+	    $return = $request_insert;
+	    return $return;
+	}
 	public function insertDetalle(int $idpedido, int $productoid, float $precio, int $cantidad){
 		$this->con = new Mysql();
 		$query_insert  = "INSERT INTO detalle_pedido(pedidoid,productoid,precio,cantidad) 
@@ -75,7 +98,55 @@ trait TCliente{
 	    $return = $request_insert;
 	    return $return;
 	}
+	public function selectProducto(int $idproducto){
+		$this->con = new Mysql();
 
+		$this->intIdProducto = $idproducto;
+		$sql = "SELECT p.idproducto,
+						p.codigo,
+						p.nombre,
+						p.descripcion,
+						p.precio,
+						p.stock,
+						p.stocktalle1,
+						p.stocktalle2,
+						p.stocktalle3,
+						p.stocktalle4,
+						p.stocktalle5,
+						p.stocktalle6,
+						p.stocktalle7,
+						p.stocktalle8,
+						p.categoriaid,
+						c.nombre as categoria,
+						p.status
+				FROM producto p
+				INNER JOIN categoria c
+				ON p.categoriaid = c.idcategoria
+				WHERE idproducto = $this->intIdProducto";
+		$request = $this->con->select($sql);
+		return $request;
+
+	}
+	public function updatePedido(int $idpedido, int $monto = NULL,string $tipopago = NULL, string $estado){
+		$this->con = new Mysql();
+
+		$transaccion = null;	
+		if($transaccion == NULL){
+			$query_insert  = "UPDATE pedido SET tipopago = ?,monto = ?, status = ?  WHERE idpedido = $idpedido ";
+
+			$arrData = array($tipopago, $monto, $estado);
+		}else{
+			$query_insert  = "UPDATE pedido SET referenciacobro = ?, tipopagoid = ?,status = ? WHERE idpedido = $idpedido";
+			$arrData = array($transaccion,
+							$tipopago,
+							$estado
+						);
+		}
+	
+		$request_insert = $this->con->update($query_insert,$arrData);
+
+		return $request_insert;
+	}
 	public function insertDetalleTemp(array $pedido){
 		$this->intIdUsuario = $pedido['idcliente'];
 		$this->intIdTransaccion = $pedido['idtransaccion'];
@@ -121,20 +192,17 @@ trait TCliente{
 	public function getPedido(int $idpedido){
 		$this->con = new Mysql();
 		$request = array();
+
 		$sql = "SELECT p.idpedido,
-							p.referenciacobro,
-							p.idtransaccionpaypal,
-							p.personaid,
 							p.fecha,
 							p.costo_envio,
 							p.monto,
-							p.tipopagoid,
-							t.tipopago,
+							p.tipopago,
+							p.email_cliente,
 							p.direccion_envio,
-							p.status
+							p.status,
+							p.tipo_envio
 					FROM pedido as p
-					INNER JOIN tipopago t
-					ON p.tipopagoid = t.idtipopago
 					WHERE p.idpedido =  $idpedido";
 		$requestPedido = $this->con->select($sql);
 		if(count($requestPedido) > 0){
@@ -185,6 +253,90 @@ trait TCliente{
 		$request_insert = $this->con->insert($query_insert,$arrData);
 		return $request_insert;
 	}
+	public function getProducto(int $idproducto){
+		$request =array();
+		$this->con = new Mysql();
+		$sql = 	"SELECT * FROM producto WHERE idproducto = $idproducto";
+		$request = $this->con->select($sql);
+		return $request;
+
+	}
+	public function updateProducto(int $idproducto,int $cantidad,int $talle){
+		$this->intIdProducto = $idproducto;
+		$this->intCantidad = $cantidad;
+		$this->intTalle = $talle;
+		
+		$request =array();
+		$this->con = new Mysql();
+		$sql = 	"SELECT * FROM producto WHERE idproducto = $idproducto";
+		$request = $this->con->select($sql);
+		if(!empty($request)){
+			$stock = $request['stock'];
+
+			$stockActual = $stock - $cantidad;
+
+			if($talle == '85'){
+				$stockTalle = $request['stocktalle1'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle1 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '90'){
+				$stockTalle = $request['stocktalle2'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle2 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '95'){
+				$stockTalle = $request['stocktalle3'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle3 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '100'){
+				$stockTalle = $request['stocktalle4'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle4 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '105'){
+				$stockTalle = $request['stocktalle5'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle5 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '110'){
+				$stockTalle = $request['stocktalle6'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle6 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '115'){
+				$stockTalle = $request['stocktalle7'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle7 = ? WHERE idproducto = ? ";
+
+			}
+			if($talle == '120'){
+				$stockTalle = $request['stocktalle8'];
+				$stockTalleActual = $stockTalle - $cantidad;
+				$sql = "UPDATE producto SET stock = ?, stocktalle8 = ? WHERE idproducto = ? ";
+
+			}
+			
+
+			$arrData = array($stockActual, 
+								$stockTalleActual,
+								 $idproducto);
+
+				$request = $this->con->update($sql,$arrData);
+
+
+		}
+		return $request;
+
+	}
+	
 }
 
  ?>

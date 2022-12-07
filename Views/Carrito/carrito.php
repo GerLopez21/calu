@@ -33,7 +33,8 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 									<th class="column-2"></th>
 									<th class="column-3">Precio</th>
 									<th class="column-4">Cantidad</th>
-									<th class="column-5">Total</th>
+									<th class="column-5">Talle</th>
+									<th class="column-6">Total</th>
 								</tr>
 							<?php 
 								foreach ($_SESSION['arrCarrito'] as $producto) {
@@ -65,7 +66,8 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 											</div>
 										</div>
 									</td>
-									<td class="column-5"><?= SMONEY.formatMoney($totalProducto) ?></td>
+									<td class="column-5"><?=$producto['talle']?></td>
+									<td class="column-6"><?= SMONEY.formatMoney($totalProducto) ?></td>
 								</tr>
 							<?php } ?>
 

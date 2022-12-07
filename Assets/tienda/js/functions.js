@@ -55,7 +55,10 @@ $('.js-addcart-detail').each(function(){
 		if(this.getAttribute('pr')){
 			cant = this.getAttribute('pr');
 		}
-
+		if(document.querySelector('#listTalles')){
+			talle = document.querySelector('#listTalles').value;
+		}
+		console.log(talle);
 		if(isNaN(cant) || cant < 1){
 			swal("","La cantidad debe ser mayor o igual que 1" , "error");
 			return;
@@ -65,6 +68,7 @@ $('.js-addcart-detail').each(function(){
 	    let formData = new FormData();
 	    formData.append('id',id);
 	    formData.append('cant',cant);
+		formData.append('talle',talle);
 	    request.open("POST",ajaxUrl,true);
 	    request.send(formData);
 	    request.onreadystatechange = function(){
@@ -274,34 +278,20 @@ function fntUpdateCant(pro,cant){
 	return false;
 }
 
-if(document.querySelector("#txtDireccion")){
-	let direccion = document.querySelector("#txtDireccion");
-	direccion.addEventListener('keyup', function(){
-		let dir = this.value;
-		fntViewPago();
-	});
-}
 
-if(document.querySelector("#txtCiudad")){
-	let ciudad = document.querySelector("#txtCiudad");
-	ciudad.addEventListener('keyup', function(){
-		let c = this.value;
-		fntViewPago();
-	});
-}
+
 
 if(document.querySelector("#condiciones")){
-	let opt = document.querySelector("#condiciones");
-	opt.addEventListener('click', function(){
+	let opc = document.querySelector("#condiciones");
+	opc.addEventListener('click', function(){
 		let opcion = this.checked;
 		if(opcion){
-			document.querySelector('#optMetodoPago').classList.remove("notblock");
+			document.querySelector('#datosFact').classList.remove("notblock");
 		}else{
-			document.querySelector('#optMetodoPago').classList.add("notblock");
+			document.querySelector('#datosFact').classList.add("notblock");
 		}
 	});
 }
-
 function fntViewPago(){
 	let direccion = document.querySelector("#txtDireccion").value;
 	let ciudad = document.querySelector("#txtCiudad").value;
@@ -309,28 +299,108 @@ function fntViewPago(){
 		document.querySelector('#divMetodoPago').classList.add("notblock");
 	}else{
 		document.querySelector('#divMetodoPago').classList.remove("notblock");
-	}
+	}}
+if(document.querySelector("#continuar")){
+	let opt = document.querySelector("#continuar");
+	opt.addEventListener('click', function(){
+		let opcion = this.checked;
+		if(opcion){
+			document.querySelector('#divPago').classList.remove("notblock");
+		}else{
+			document.querySelector('#divPago').classList.add("notblock");
+		}
+	});
 }
+if(document.querySelector("#continuar")){
+	let opt = document.querySelector("#continuar");
+	opt.addEventListener('click', function(){
+		let opcion = this.checked;
+		if(opcion){
+			document.querySelector('#divPago').classList.remove("notblock");
+		}else{
+			document.querySelector('#divPago').classList.add("notblock");
+		}
+	});
+}
+if(document.querySelector(".opcionEnvio")){
+	let optmetodo = document.querySelectorAll(".opcionEnvio");
+    optmetodo.forEach(function(optmetodo) {
+        optmetodo.addEventListener('click', function(){
+        	if(this.value == "retiro"){
+				$('#centro').css('background','white');
+
+        		document.querySelector('#divMetodoPago').classList.remove("notblock");
+				$('#entrelocal').is(':checked');
+				$('#centro').removeAttr('checked');
+			}
+			if(this.value == "entrelocal"){
+
+        		document.querySelector('#divMetodoPago').classList.remove("notblock");
+				$('#retiro').removeAttr('checked');
+				$('#centro').removeAttr('checked');
+			}
+			if(this.value == "centro"){
+				alert("hola");
+        		document.querySelector('#divMetodoPago').classList.remove("notblock");
+				$('#entrelocal').removeAttr('checked');
+				$('#retiro').removeAttr('checked');
+			}
+			
+        });
+    });
+}
+if(document.querySelector(".opcionPago")){
+	let optmetodoPago = document.querySelectorAll(".opcionPago");
+    optmetodoPago.forEach(function(optmetodoPago) {
+        optmetodoPago.addEventListener('click', function(){
+        	if(this.value == "transferencia"){
+
+        		document.querySelector('#divConfirmarPago').classList.remove("notblock");
+			}
+			if(this.value == "acordar"){
+
+        		document.querySelector('#divConfirmarPago').classList.remove("notblock");
+
+			}
+	
+			
+        });
+    });
+}
+// function fntViewPago(){
+// 	let direccion = document.querySelector("#retiro").value;
+// 	let ciudad = document.querySelector("#entrelocal").value;
+// 	console.log(document.querySelector("#entrelocal").value);
+// 	if(direccion == "" || ciudad == ""){
+// 		document.querySelector('#divMetodoPago').classList.remove("notblock");
+// 	}
+// }
+
 
 if(document.querySelector("#btnComprar")){
 	let btnPago = document.querySelector("#btnComprar");
 	btnPago.addEventListener('click',function() { 
-		let dir = document.querySelector("#txtDireccion").value;
-	    let ciudad = document.querySelector("#txtCiudad").value;
-	    let inttipopago = document.querySelector("#listtipopago").value; 
-	    if( txtDireccion == "" || txtCiudad == "" || inttipopago =="" ){
-			swal("", "Complete datos de envío" , "error");
+		let seleccionado = document.querySelectorAll(".opcionEnvio").value;
+		if($('#transferencia').is(':checked') === true){
+			var tipopago = "transferencia";
+		}
+		if($('#acordar').is(':checked') === true){
+			var tipopago = "acordar";		
+		}
+		
+		
+	    if( tipopago == ""){
+			swal("", "Seleccione un tipo de pago	" , "error");
 			return;
 		}else{
+			alert("hola")
 			divLoading.style.display = "flex";
 			let request = (window.XMLHttpRequest) ? 
 	                    new XMLHttpRequest() : 
 	                    new ActiveXObject('Microsoft.XMLHTTP');
-			let ajaxUrl = base_url+'/Tienda/procesarVenta';
+			let ajaxUrl = base_url+'/Tienda/procesarPedido';
 			let formData = new FormData();
-		    formData.append('direccion',dir);    
-		   	formData.append('ciudad',ciudad);
-			formData.append('inttipopago',inttipopago);
+		    formData.append('tipopago',tipopago);    
 		   	request.open("POST",ajaxUrl,true);
 		    request.send(formData);
 		    request.onreadystatechange = function(){
@@ -349,6 +419,84 @@ if(document.querySelector("#btnComprar")){
 		}
 
 	},false);
+}
+if(document.querySelector("#formDatos")){
+    let formDatos = document.querySelector("#formDatos");
+	var tipoenvio = "";
+    formDatos.onsubmit = function(e) {
+        e.preventDefault();
+		let seleccionado = document.querySelectorAll(".opcionEnvio").value;
+
+		if($('#entrelocal').is(':checked') === true){
+			var tipoenvio = "entrelocal";
+			
+		}
+		if($('#retiro').is(':checked') === true){
+			var tipoenvio = "retiro";
+		}
+		if($('#centro').is(':checked') === true){
+			var tipoenvio = "centro";
+		}
+		let strEmail = document.querySelector('#txtEmail').value;
+		let strPais = document.querySelector('#txtPais').value;
+		let intDni = document.querySelector('#txtDni').value;
+		let strNombre = document.querySelector('#txtNombre').value;
+		let strApellido = document.querySelector('#txtApellido').value;
+		let intTelefono = document.querySelector('#txtTelefono').value;
+		let strCalle = document.querySelector('#txtCalle').value;
+		let intNumero = document.querySelector('#txtNumero').value;
+		let strBarrio = document.querySelector('#txtBarrio').value;
+		let strCiudad = document.querySelector('#txtCiudad').value;
+		let intCP = document.querySelector('#txtCP').value;
+		let strProvincia = document.querySelector('#txtProvincia').value;
+
+	
+	    // let ciudad = document.querySelector("#txtCiudad").value;
+	    // let inttipopago = document.querySelector("#listtipopago").value; 
+	    if( tipoenvio == "" || strEmail == "" || strPais == "" || intDni == "" || strNombre == "" || strApellido == "" || intTelefono == ""
+		|| strCalle == "" || intNumero == "" || strCiudad == "" || intCP == "" || strProvincia == ""){
+			swal("", "Complete datos de envío" , "error");
+			return;
+		}else{
+			divLoading.style.display = "flex";
+			let request = (window.XMLHttpRequest) ? 
+	                    new XMLHttpRequest() : 
+	                    new ActiveXObject('Microsoft.XMLHTTP');
+			let ajaxUrl = base_url+'/Tienda/procesarEnvio';
+			let formData = new FormData();
+		    formData.append('tipoenvio',tipoenvio);    
+			formData.append('email',strEmail);    
+			formData.append('pais',strPais);    
+			formData.append('dni',intDni);    
+			formData.append('nombre',strNombre);    
+			formData.append('apellido',strApellido);  
+			formData.append('telefono',intTelefono);    
+			formData.append('calle',strCalle);    
+			formData.append('numero',intNumero);    
+			formData.append('barrio',strBarrio);    
+			formData.append('ciudad',strCiudad);    
+			formData.append('codigopostal',intCP);    
+			formData.append('provincia',strProvincia);    
+
+			alert(ajaxUrl)
+		   	request.open("POST",ajaxUrl,true);
+		    request.send(formData);
+		    request.onreadystatechange = function(){
+		    	if(request.readyState != 4) return;
+		    	if(request.status == 200){
+		    		let objData = JSON.parse(request.responseText);
+		    		if(objData.status){
+		    			window.location = base_url+"/carrito/confirmarpago/";
+		    		}else{
+		    			swal("", objData.msg , "error");
+		    		}
+		    	}
+		    	divLoading.style.display = "none";
+            	return false;
+		    }
+		}
+
+	},false;
 }
 
 if(document.querySelector("#frmSuscripcion")){

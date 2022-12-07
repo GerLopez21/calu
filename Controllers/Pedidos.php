@@ -39,12 +39,15 @@ class Pedidos extends Controllers{
 				$btnEdit = '';
 				$btnDelete = '';
 
-				$arrData[$i]['transaccion'] = $arrData[$i]['referenciacobro'];
-				if($arrData[$i]['idtransaccionpaypal'] != ""){
-					$arrData[$i]['transaccion'] = $arrData[$i]['idtransaccionpaypal'];
-				}
-
 				$arrData[$i]['monto'] = SMONEY.formatMoney($arrData[$i]['monto']);
+				$arrData[$i]['tipopago'] = $arrData[$i]['tipopago'];
+				$arrData[$i]['tipo_envio'] = $arrData[$i]['tipo_envio'];
+				$arrData[$i]['nombre_cliente'] = $arrData[$i]['nombre_cliente'];
+				$arrData[$i]['apellido_cliente'] = $arrData[$i]['apellido_cliente'];
+				$arrData[$i]['dni_cliente'] = $arrData[$i]['dni_cliente'];
+				$arrData[$i]['telefono_cliente'] = $arrData[$i]['telefono_cliente'];
+				$arrData[$i]['direccion_envio'] = $arrData[$i]['direccion_envio'];
+
 
 				
 				if($_SESSION['permisosMod']['r']){
@@ -53,11 +56,7 @@ class Pedidos extends Controllers{
 
 						<a title="Generar PDF" href="'.base_url().'/factura/generarFactura/'.$arrData[$i]['idpedido'].'" target="_blanck" class="btn btn-danger btn-sm"> <i class="fas fa-file-pdf"></i> </a> ';
 
-					if($arrData[$i]['idtipopago'] == 1){
-						$btnView .= '<a title="Ver Transacción" href="'.base_url().'/pedidos/transaccion/'.$arrData[$i]['idtransaccionpaypal'].'" target="_blanck" class="btn btn-info btn-sm"> <i class="fa fa-paypal" aria-hidden="true"></i> </a> ';
-					}else{
-						$btnView .= '<button class="btn btn-secondary btn-sm" disabled=""><i class="fa fa-paypal" aria-hidden="true"></i></button> ';
-					}
+					
 				}
 				if($_SESSION['permisosMod']['u']){
 					$btnEdit = '<button class="btn btn-primary  btn-sm" onClick="fntEditInfo(this,'.$arrData[$i]['idpedido'].')" title="Editar pedido"><i class="fas fa-pencil-alt"></i></button>';

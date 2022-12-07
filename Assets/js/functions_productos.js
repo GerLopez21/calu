@@ -77,19 +77,18 @@ window.addEventListener('load', function() {
         formProductos.onsubmit = function(e) {
             e.preventDefault();
             let strNombre = document.querySelector('#txtNombre').value;
-            let intCodigo = document.querySelector('#txtCodigo').value;
             let strPrecio = document.querySelector('#txtPrecio').value;
             let intStock = document.querySelector('#txtStock').value;
             let intStatus = document.querySelector('#listStatus').value;
-            if(strNombre == '' || intCodigo == '' || strPrecio == '' || intStock == '' )
+            if(strNombre == '' || strPrecio == '' || intStock == '' )
             {
                 swal("Atención", "Todos los campos son obligatorios." , "error");
                 return false;
             }
-            if(intCodigo.length < 5){
-                swal("Atención", "El código debe ser mayor que 5 dígitos." , "error");
-                return false;
-            }
+            // if(intCodigo.length < 5){
+            //     swal("Atención", "El código debe ser mayor que 5 dígitos." , "error");
+            //     return false;
+            // }
             divLoading.style.display = "flex";
             tinyMCE.triggerSave();
             let request = (window.XMLHttpRequest) ? 
@@ -114,7 +113,7 @@ window.addEventListener('load', function() {
                            htmlStatus = intStatus == 1 ? 
                             '<span class="badge badge-success">Activo</span>' : 
                             '<span class="badge badge-danger">Inactivo</span>';
-                            rowTable.cells[1].textContent = intCodigo;
+                          //  rowTable.cells[1].textContent = intCodigo;
                             rowTable.cells[2].textContent = strNombre;
                             rowTable.cells[3].textContent = intStock;
                             rowTable.cells[4].textContent = smony+strPrecio;
@@ -152,17 +151,6 @@ window.addEventListener('load', function() {
     fntCategorias();
 }, false);
 
-if(document.querySelector("#txtCodigo")){
-    let inputCodigo = document.querySelector("#txtCodigo");
-    inputCodigo.onkeyup = function() {
-        if(inputCodigo.value.length >= 5){
-            document.querySelector('#divBarCode').classList.remove("notblock");
-            fntBarcode();
-       }else{
-            document.querySelector('#divBarCode').classList.add("notblock");
-       }
-    };
-}
 
 tinymce.init({
 	selector: '#txtDescripcion',
@@ -318,15 +306,21 @@ function fntEditInfo(element,idProducto){
                 document.querySelector("#idProducto").value = objProducto.idproducto;
                 document.querySelector("#txtNombre").value = objProducto.nombre;
                 document.querySelector("#txtDescripcion").value = objProducto.descripcion;
-                document.querySelector("#txtCodigo").value = objProducto.codigo;
                 document.querySelector("#txtPrecio").value = objProducto.precio;
                 document.querySelector("#txtStock").value = objProducto.stock;
+                document.querySelector("#txtStock1").value = objProducto.stocktalle1;
+                document.querySelector("#txtStock2").value = objProducto.stocktalle2;
+                document.querySelector("#txtStock3").value = objProducto.stocktalle3;
+                document.querySelector("#txtStock4").value = objProducto.stocktalle4;
+                document.querySelector("#txtStock5").value = objProducto.stocktalle5;
+                document.querySelector("#txtStock6").value = objProducto.stocktalle6;
+                document.querySelector("#txtStock7").value = objProducto.stocktalle7;
+                document.querySelector("#txtStock8").value = objProducto.stocktalle8;
                 document.querySelector("#listCategoria").value = objProducto.categoriaid;
                 document.querySelector("#listStatus").value = objProducto.status;
                 tinymce.activeEditor.setContent(objProducto.descripcion); 
                 $('#listCategoria').selectpicker('render');
                 $('#listStatus').selectpicker('render');
-                fntBarcode();
 
                 if(objProducto.images.length > 0){
                     let objProductos = objProducto.images;
@@ -341,7 +335,6 @@ function fntEditInfo(element,idProducto){
                     }
                 }
                 document.querySelector("#containerImages").innerHTML = htmlImage; 
-                document.querySelector("#divBarCode").classList.remove("notblock");
                 document.querySelector("#containerGallery").classList.remove("notblock");           
                 $('#modalFormProductos').modal('show');
             }else{
@@ -408,10 +401,7 @@ function fntCategorias(){
     }
 }
 
-function fntBarcode(){
-    let codigo = document.querySelector("#txtCodigo").value;
-    JsBarcode("#barcode", codigo);
-}
+
 
 function fntPrintBarcode(area){
     let elemntArea = document.querySelector(area);
@@ -431,9 +421,11 @@ function openModal()
     document.querySelector('#btnText').innerHTML ="Guardar";
     document.querySelector('#titleModal').innerHTML = "Nuevo Producto";
     document.querySelector("#formProductos").reset();
-    document.querySelector("#divBarCode").classList.add("notblock");
-    document.querySelector("#containerGallery").classList.add("notblock");
     document.querySelector("#containerImages").innerHTML = "";
     $('#modalFormProductos').modal('show');
 
 }
+var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdownList'))
+var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+  return new bootstrap.Dropdown(dropdownToggleEl)
+})
