@@ -19,6 +19,12 @@ $arrProductos = $data['productos'];
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						 Categoría &nbsp;
 					</div>
+						<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter2">
+						&nbsp;&nbsp;
+						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
+						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+						 Ordenar por &nbsp;
+					</div>
 				</div>
 				<!-- Filter -->
 				<div class="dis-none panel-filter w-full p-t-10">
@@ -44,8 +50,33 @@ $arrProductos = $data['productos'];
 						</div>
 					</div>
 				</div>
-			</div>
+			
+				<!-- Filter -->
+				<div class="dis-none panel-filter2 w-full p-t-10">
+					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+						<div class="filter-col4 p-b-27">
+							
 
+							<div class="flex-w p-t-4 m-r--5">
+								<a href="<?= base_url() ?>/tienda/orderby/<?= 1 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Precio menor a mayor</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= 2 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Precio mayor a menor</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= 3 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Productos mas nuevos</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= 4 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Productos mas viejos</b></span>
+								</a>
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            
 			<div class="row isotope-grid">
 			<?php
 			if(count($arrProductos) > 0 ){ 
@@ -57,7 +88,7 @@ $arrProductos = $data['productos'];
 						$portada = media().'/images/uploads/product.png';
 					}
 			 ?>
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women" data-aos="fade-down">
 					<!-- Block2 -->
 					<div class="block2">
 						<div class="block2-pic hov-img0">
@@ -88,7 +119,7 @@ $arrProductos = $data['productos'];
 								 class="btn-addwish-b2 dis-block pos-relative js-addwish-b2 js-addcart-detail
 								 icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11
 								 ">
-									<i class="zmdi zmdi-shopping-cart"></i>
+									<i class="zmdi zmdi-shopping-cart" alt="carrito"></i>
 								</a>
 							</div>
 						</div>

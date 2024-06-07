@@ -38,8 +38,14 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 								</tr>
 							<?php 
 								foreach ($_SESSION['arrCarrito'] as $producto) {
-									$totalProducto = $producto['precio'] * $producto['cantidad'];
-									$subtotal += $totalProducto;
+								    if($producto['preciodescuento'] > 0){
+								    	$totalProducto = $producto['preciodescuento'] * $producto['cantidad'];
+								    }else{
+								    	$totalProducto = $producto['precio'] * $producto['cantidad'];
+								        
+								    }
+									    $subtotal += $totalProducto;
+
 									$idProducto = openssl_encrypt($producto['idproducto'],METHODENCRIPT,KEY);
 								
 							 ?>
@@ -49,24 +55,30 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 											<img src="<?= $producto['imagen'] ?>" alt="<?= $producto['producto'] ?>">
 										</div>
 									</td>
-									<td class="column-2"><?= $producto['producto'] ?></td>
+									<td class="column-2"><?= $producto['producto'] ." - ".$producto['nombrecolor'] ?></td>
+									<?php if($producto['preciodescuento'] > 0){ ?>
 									<td class="column-3"><?= SMONEY.formatMoney($producto['precio']) ?></td>
-									<td class="column-4">
+									<?php }else{ ?>
+									    <td class="column-3"><?= SMONEY.formatMoney($producto['preciodescuento']) ?></td>
+
+									<?php } ?>
+<!--									<td class="column-4">
 										<div class="wrap-num-product flex-w m-l-auto m-r-0">
 											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
-											idpr="<?= $idProducto ?>">
+											idpr="?= $idProducto ?>">
 												<i class="fs-16 zmdi zmdi-minus"></i>
 											</div>
 
-											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="<?= $producto['cantidad'] ?>" idpr="<?= $idProducto ?>">
+											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="?= $producto['cantidad'] ?>" idpr="?= $idProducto ">
 
 											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m"
 											idpr="<?= $idProducto ?>">
 												<i class="fs-16 zmdi zmdi-plus"></i>
 											</div>
 										</div>
-									</td>
-									<td class="column-5"><?=$producto['talle']?></td>
+									</td>-->
+									<td class="column-5"><?=$producto['cantidad']?></td>
+									<td class="column-5"><?=$producto['nombretalle']?></td>
 									<td class="column-6"><?= SMONEY.formatMoney($totalProducto) ?></td>
 								</tr>
 							<?php } ?>
@@ -116,7 +128,6 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 
 							<div class="size-209">
 								<span class="mtext-110 cl2">
-									<?= SMONEY.formatMoney(COSTOENVIO) ?>
 								</span>
 							</div>
 						</div>
@@ -129,12 +140,12 @@ if(isset($_SESSION['arrCarrito']) and count($_SESSION['arrCarrito']) > 0){
 
 							<div class="size-209 p-t-1">
 								<span id="totalCompra" class="mtext-110 cl2">
-									<?= SMONEY.formatMoney($subtotal + COSTOENVIO) ?>
+									<?= SMONEY.formatMoney($subtotal) ?>
 								</span>
 							</div>
 						</div>
 						<a href="<?= base_url() ?>/carrito/procesarpago" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-							Procesar pago
+							Seleccionar metodo de envío
 						</a>
 					</div>
 				</div>

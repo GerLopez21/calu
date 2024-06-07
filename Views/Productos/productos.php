@@ -1,7 +1,12 @@
 <?php 
+
     headerAdmin($data); 
+
     getModal('modalProductos',$data);
+
 ?>
+    <div id="contentAjax"></div> 
+
     <main class="app-content">
       <div class="app-title">
         <div>
@@ -25,15 +30,16 @@
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Código</th>
+                          <th>Imagen</th>
                           <th>Nombre</th>
-                          <th>Stock</th>
+                          <th>Stock General</th>
                           <th>Precio</th>
                           <th>Estado</th>
                           <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
+                          <tr></tr>
                       </tbody>
                     </table>
                   </div>

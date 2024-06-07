@@ -9,18 +9,21 @@
 	$infoPreguntas = !empty(getInfoPage(PPREGUNTAS)) ? getInfoPage(PPREGUNTAS)['contenido'] : "";
  ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 	<title><?= $data['page_tag']; ?></title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="CALU- Tienda bikinis, lenceria, bodys, ruanas, pijamas y mas"/>
+    <meta http-equiv="content-language" content="es">
+
 	<?php 
 		$nombreSitio = NOMBRE_EMPESA;
 		$descripcion = DESCRIPCION;
 		$nombreProducto = NOMBRE_EMPESA;
 		$urlWeb = base_url();
-		$urlImg = media()."/images/logo2.png";
+		$urlImg = media()."/images/calu2.png";
 		if(!empty($data['producto'])){
 			//$descripcion = $data['producto']['descripcion'];
 			$descripcion = DESCRIPCION;
@@ -38,7 +41,7 @@
 	<meta property="og:image"       content="<?= $urlImg; ?>" />
 
 <!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="<?= media() ?>/tienda/images/favicon.ico"/>
+	<link rel="icon" type="image/png" href="<?= media() ?>/tienda/images/calu2.png"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="<?= media() ?>/tienda/vendor/bootstrap/css/bootstrap.min.css">
 <!--===============================================================================================-->
@@ -67,8 +70,24 @@
 	<link rel="stylesheet" type="text/css" href="<?= media() ?>/tienda/css/util.css">
 	<link rel="stylesheet" type="text/css" href="<?= media() ?>/tienda/css/main.css">
 	<link rel="stylesheet" type="text/css" href="<?= media(); ?>/css/style.css">
+	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+
 <!--===============================================================================================-->
+<!-- Style of the plugin -->
+<link rel="stylesheet" href="<?= media() ?>/tienda/vendor/plugin/components/Font Awesome/css/font-awesome.min.css">
+     <link rel="stylesheet" href="<?= media() ?>/tienda/vendor/plugin/whatsapp-chat-support.css">
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Z341BV9E4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5Z341BV9E4');
+</script>
 <body class="animsition">
 	<!-- Modal -->
 	<div class="modal fade" id="modalAyuda" tabindex="-1" aria-hidden="true">
@@ -103,21 +122,16 @@
 			<!-- Topbar -->
 			<div class="top-bar">
 				<div class="content-topbar flex-sb-m h-full container">
-					<div class="left-top-bar">
-						<?php if(isset($_SESSION['login'])){ ?>
-						Bienvenido: <?= $_SESSION['userData']['nombres'].' '.$_SESSION['userData']['apellidos'] ?>
-						<?php } ?>
-					</div>
+				
 
 					<div class="right-top-bar flex-w h-full">
 						<a href="#" class="flex-c-m trans-04 p-lr-25" data-toggle="modal" data-target="#modalAyuda" >
-							Help & FAQs
+    						Preguntas frecuentes
 						</a>
 						<?php 
 							if(isset($_SESSION['login'])){
 						?>
 						<a href="<?= base_url() ?>/dashboard" class="flex-c-m trans-04 p-lr-25">
-							Mi cuenta
 						</a>
 						<?php } 
 							if(isset($_SESSION['login'])){
@@ -149,24 +163,45 @@
 								<a href="<?= base_url(); ?>">Inicio</a>
 							</li>
 
-							<li>
-								<a href="<?= base_url(); ?>/tienda">Tienda</a>
+							<li class="active-menu">
+								<a href="<?= base_url(); ?>/tienda">Productos</a>
+								<ul class="sub-menu respon-menu">
+								    <li><a href="<?= base_url(); ?>/tienda/categoria/3/trajes-de-bano">Trajes de baño</a></li>
+							        <li><a href="<?= base_url(); ?>/tienda/categoria/2/conjuntos-de-lenceria">Conjuntos de lenceria</a></li>
+							        <li><a href="<?= base_url(); ?>/tienda/categoria/9/pijamas">Pijamas</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/6/ropa-deportiva">Ropa deportiva</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/5/ruanas">Ruanas</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/7/bodys">Bodys</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/8/bombis">Bombis</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/10/medias">Pantys</a></li>
+
+								</ul>
 							</li>
 
+                            <li>
+								<a href="<?= base_url(); ?>/comprar">Como comprar</a>
+							</li>
+							
 							<li>
 								<a href="<?= base_url(); ?>/carrito">Carrito</a>
 							</li>
 							
 							<li>
-								<a href="<?= base_url(); ?>/nosotros">Nosotros</a>
+								<a href="<?= base_url(); ?>/nosotros">Nosotras</a>
 							</li>
 
-							<li>
-								<a href="<?= base_url(); ?>/sucursales">Sucursales</a>
-							</li>
 
 							<li>
 								<a href="<?= base_url(); ?>/contacto">Contacto</a>
+							</li>
+							
+							
+							<li>
+								<a href="<?= base_url(); ?>/envios">Envios</a>
+							</li>
+							
+							<li>
+								<a href="<?= base_url(); ?>/cambios">Política de cambios</a>
 							</li>
 						</ul>
 					</div>	
@@ -190,7 +225,7 @@
 		<div class="wrap-header-mobile">
 			<!-- Logo moblie -->		
 			<div class="logo-mobile">
-				<a href="<?= base_url(); ?>"><img src="<?= media() ?>/tienda/images/logo.png" alt="Tienda Virtual"></a>
+				<a href="<?= base_url(); ?>"><img src="<?= media() ?>/tienda/images/calu2.png" alt="Tienda Virtual"></a>
 			</div>
 
 			<!-- Icon header -->
@@ -217,13 +252,13 @@
 		<!-- Menu Mobile -->
 		<div class="menu-mobile">
 			<ul class="topbar-mobile">
-				<li>
+			<!--	<li>
 					<div class="left-top-bar">
 						<?php if(isset($_SESSION['login'])){ ?>
 						Bienvenido: <?= $_SESSION['userData']['nombres'].' '.$_SESSION['userData']['apellidos'] ?>
 						<?php } ?>
 					</div>
-				</li>
+				</li>-->
 
 				<li>
 					<div class="right-top-bar flex-w h-full">
@@ -252,29 +287,55 @@
 			</ul>
 
 			<ul class="main-menu-m">
-				<li>
-					<a href="<?= base_url(); ?>">Inicio</a>
-				</li>
+			                <li>
+								<a href="<?= base_url(); ?>">Inicio</a>
+							</li>
 
-				<li>
-					<a href="<?= base_url(); ?>/tienda">Tienda</a>
-				</li>
+						<li class="active-menu">
+								<a href="<?= base_url(); ?>/tienda">Productos</a>
+								<ul class="sub-menu">
+								    <li><a href="<?= base_url(); ?>/tienda/categoria/3/trajes-de-bano">Trajes de baño</a></li>
+							        <li><a href="<?= base_url(); ?>/tienda/categoria/2/conjuntos-de-lenceria">Conjuntos de lenceria</a></li>
+							        
+							        <li><a href="<?= base_url(); ?>/tienda/categoria/2/conjuntos-de-lenceria">Ropa interior</a>
+							        <ul class="sub-menu">
+							            <li><a href="<?= base_url(); ?>/tienda">Bombis</a></li>
+							            <li><a href="<?= base_url(); ?>/tienda">Corpiños</a></li>
+							        </ul>
+							        </li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/5/ruanas">Ruanas</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/6/ropa-deportiva">Ropa deportiva</a></li>
+                                    <li><a href="<?= base_url(); ?>/tienda/categoria/7/bodys">Bodys</a></li>
 
-				<li>
-					<a href="<?= base_url(); ?>/carrito">Carrito</a>
-				</li>
+								</ul>
+							</li>
 
-				<li>
-					<a href="<?= base_url(); ?>/nosotros">Nosotros</a>
-				</li>
+                            <li>
+								<a href="<?= base_url(); ?>/comprar">Como comprar</a>
+							</li>
+							
+							<li>
+								<a href="<?= base_url(); ?>/carrito">Carrito</a>
+							</li>
+							
+							<li>
+								<a href="<?= base_url(); ?>/nosotros">Nosotros</a>
+							</li>
 
-				<li>
-					<a href="<?= base_url(); ?>/sucursales">Sucursales</a>
-				</li>
+		
 
-				<li>
-					<a href="<?= base_url(); ?>/contacto">Contacto</a>
-				</li>
+							<li>
+								<a href="<?= base_url(); ?>/contacto">Contacto</a>
+							</li>
+							
+							
+							<li>
+								<a href="<?= base_url(); ?>/envios">Envios</a>
+							</li>
+							
+							<li>
+								<a href="<?= base_url(); ?>/cambios">Política de cambios</a>
+							</li>
 			</ul>
 		</div>
 

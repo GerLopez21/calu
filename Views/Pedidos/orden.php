@@ -1,4 +1,5 @@
-<?php headerAdmin($data); ?>
+<?php headerAdmin($data);
+?>
 <main class="app-content">
   <div class="app-title">
     <div>
@@ -17,43 +18,29 @@
         ?>
         <p>Datos no encontrados</p>
         <?php }else{
-            $cliente = $data['arrPedido']['cliente']; 
             $orden = $data['arrPedido']['orden'];
             $detalle = $data['arrPedido']['detalle'];
-            $transaccion = $orden['idtransaccionpaypal'] != "" ? 
-                           $orden['idtransaccionpaypal'] : 
-                           $orden['referenciacobro'];
          ?>
         <section id="sPedido" class="invoice">
           <div class="row mb-4">
             <div class="col-6">
-              <h2 class="page-header"><img src="<?= media(); ?>/tienda/images/logo.png" ></h2>
+
+              <h2 class="page-header"><img src="<?= media(); ?>/tienda/images/calu.png" height="100px" ></h2>
             </div>
             <div class="col-6">
               <h5 class="text-right">Fecha: <?= $orden['fecha'] ?></h5>
             </div>
           </div>
           <div class="row invoice-info">
-            <div class="col-4">
-              <address><strong><?= NOMBRE_EMPESA; ?></strong><br>
-                <?= DIRECCION ?><br>
-                <?= TELEMPRESA ?><br>
-                <?= EMAIL_EMPRESA ?><br>
-                <?= WEB_EMPRESA ?>
-              </address>
-            </div>
-            <div class="col-4">
-              <address><strong><?= $cliente['nombres'].' '.$cliente['apellidos'] ?></strong><br>
-                Envío: <?= $orden['direccion_envio']; ?><br>
-                Tel: <?= $cliente['telefono'] ?><br>
-                Email: <?= $cliente['email_user'] ?>
-               </address>
-            </div>
+           
+          
             <div class="col-4"><b>Orden #<?= $orden['idpedido'] ?></b><br> 
                 <b>Pago: </b><?= $orden['tipopago'] ?><br>
-                <b>Transacción:</b> <?= $transaccion ?> <br>
                 <b>Estado:</b> <?= $orden['status'] ?> <br>
-                <b>Monto:</b> <?= SMONEY.' '. formatMoney($orden['monto']) ?>
+                <b>Monto:</b> <?= SMONEY.' '. formatMoney($orden['monto']) ?><br>
+                <b>Nombre:</b> <?= $orden['nombre_cliente'] ?><br>
+                <b>Email:</b> <?= $orden['email_cliente'] ?>
+
             </div>
           </div>
           <div class="row">
@@ -72,13 +59,28 @@
                         $subtotal = 0;
                         if(count($detalle) > 0){
                             foreach ($detalle as $producto) {
+                                if($producto['preciodescuento'] > 0){
+                                $subtotal += $producto['cantidad'] * $producto['preciodescuento'];
+                                }else{
                                 $subtotal += $producto['cantidad'] * $producto['precio'];
+
+                                }
                      ?>
                   <tr>
-                    <td><?= $producto['producto'] ?></td>
-                    <td class="text-right"><?= SMONEY.' '. formatMoney($producto['precio']) ?></td>
+                    <td><?= $producto['producto']." - ".$producto['talle']." - ".$producto['color'] ?></td>
+                    <?php  if($producto['preciodescuento'] > 0){ ?>
+
+                    <td class="text-right"><?= SMONEY.' '. formatMoney($producto['preciodescuento']) ?></td>
+                    <?php }else{ ?>
+                   <td class="text-right"><?= SMONEY.' '. formatMoney($producto['precio']) ?></td>
+                    <?php } ?>
                     <td class="text-center"><?= $producto['cantidad'] ?></td>
+                    <?php  if($producto['preciodescuento'] > 0){ ?>
+
+                    <td class="text-right"><?= SMONEY.' '. formatMoney($producto['cantidad'] * $producto['preciodescuento']) ?></td>
+                    <?php }else{ ?>
                     <td class="text-right"><?= SMONEY.' '. formatMoney($producto['cantidad'] * $producto['precio']) ?></td>
+                    <?php } ?>
                   </tr>
                   <?php 
                             }
@@ -90,10 +92,10 @@
                         <th colspan="3" class="text-right">Sub-Total:</th>
                         <td class="text-right"><?= SMONEY.' '. formatMoney($subtotal) ?></td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th colspan="3" class="text-right">Envío:</th>
-                        <td class="text-right"><?= SMONEY.' '. formatMoney($orden['costo_envio']) ?></td>
-                    </tr>
+                        <td class="text-right">?= SMONEY.' '. formatMoney($orden['costo_envio']) ?></td>
+                    </tr> -->
                     <tr>
                         <th colspan="3" class="text-right">Total:</th>
                         <td class="text-right"><?= SMONEY.' '. formatMoney($orden['monto']) ?></td>

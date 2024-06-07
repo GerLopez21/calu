@@ -8,11 +8,11 @@ headerTienda($data);
  	document.querySelector('header').classList.add('header-v4');
  </script>
 <!-- Title page -->
-<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url(<?= $banner ?>);">
+<!--<section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url(?= $banner ?>);">
 	<h2 class="ltext-105 cl0 txt-center">
-		<?= $data['page']['titulo'] ?>
+		?= $data['page']['titulo'] ?>
 	</h2>
-</section>
+</section>-->
 <!-- Content page -->
 <?php
 	if(viewPage($idpagina)){

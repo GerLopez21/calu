@@ -1,4 +1,5 @@
 <?php 
+
 require_once("Models/TTipoPago.php"); 
 class Pedidos extends Controllers{
 	use TTipoPago;
@@ -33,21 +34,21 @@ class Pedidos extends Controllers{
 				$idpersona = $_SESSION['userData']['idpersona'];
 			}
 			$arrData = $this->model->selectPedidos($idpersona);
-			//dep($arrData);
+		//	
 			for ($i=0; $i < count($arrData); $i++) {
 				$btnView = '';
 				$btnEdit = '';
 				$btnDelete = '';
-
+				
+				$arrData[$i]['asd'] = $arrData[$i]['idpedido'];
 				$arrData[$i]['monto'] = SMONEY.formatMoney($arrData[$i]['monto']);
 				$arrData[$i]['tipopago'] = $arrData[$i]['tipopago'];
+				$arrData[$i]['fecha'] = $arrData[$i]['fecha'];
 				$arrData[$i]['tipo_envio'] = $arrData[$i]['tipo_envio'];
 				$arrData[$i]['nombre_cliente'] = $arrData[$i]['nombre_cliente'];
 				$arrData[$i]['apellido_cliente'] = $arrData[$i]['apellido_cliente'];
 				$arrData[$i]['dni_cliente'] = $arrData[$i]['dni_cliente'];
 				$arrData[$i]['telefono_cliente'] = $arrData[$i]['telefono_cliente'];
-				$arrData[$i]['direccion_envio'] = $arrData[$i]['direccion_envio'];
-
 
 				
 				if($_SESSION['permisosMod']['r']){
@@ -148,11 +149,13 @@ class Pedidos extends Controllers{
 			if($pedido == ""){
 				$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 			}else{
+
 				$requestPedido = $this->model->selectPedido($pedido,"");
 				if(empty($requestPedido)){
 					$arrResponse = array("status" => false, "msg" => "Datos no disponibles.");
 				}else{
 					$requestPedido['tipospago'] = $this->getTiposPagoT();
+
 					$htmlModal = getFile("Template/Modals/modalPedido",$requestPedido);
 					$arrResponse = array("status" => true, "html" => $htmlModal);
 				}
@@ -166,19 +169,99 @@ class Pedidos extends Controllers{
 		if($_POST){
 			if($_SESSION['permisosMod']['u'] and $_SESSION['userData']['idrol'] != RCLIENTES){
 
+
 				$idpedido = !empty($_POST['idpedido']) ? intval($_POST['idpedido']) : "";
 				$estado = !empty($_POST['listEstado']) ? strClean($_POST['listEstado']) : "";
-				$idtipopago =  !empty($_POST['listTipopago']) ? intval($_POST['listTipopago']) : "";
+				$idtipopago =  !empty($_POST['listPago']) ? strClean($_POST['listPago']) : "";
+				$mail = !empty($_POST['txtEmail']) ? strClean($_POST['txtEmail']) : "";
+				$envio = !empty($_POST['listEnvio']) ? strClean($_POST['listEnvio']) : "";
+				$direccion = !empty($_POST['txtDireccion']) ? strClean($_POST['txtDireccion']) : "";
+				$telefono = !empty($_POST['txtTelefono']) ? strClean($_POST['txtTelefono']) : "";
+				$monto = !empty($_POST['txtMonto']) ? strClean($_POST['txtMonto']) : NULL;
 				$transaccion = !empty($_POST['txtTransaccion']) ? strClean($_POST['txtTransaccion']) : "";
+				$fecha_pago = null;
+				$codigo_seguimiento = !empty($_POST['txtSeguimiento']) ? strClean($_POST['txtSeguimiento']) : "";
+				$codigo = strtoupper($codigo_seguimiento);
+    			$fecha_retiro = !empty($_POST['txtRetiro']) ? strClean($_POST['txtRetiro']) : "";
+                $fecha_envio = null;
+		        if($estado == "Confirmado"){
 
+		            $fecha_pago = date('Y-m-d H:i');
+		            $dataEmailOrden = array('asunto' => "Se ha confirmado el pago de tu orden No.".$idpedido,
+													'email' => $mail, 
+													'emailCopia' => EMAIL_PEDIDOS,
+													'envio'=>$envio);
+							sendEmail($dataEmailOrden,"email_notificacion_pago");
+		        }
+                if($estado == "Completo"){
+		            $fecha_envio = date('Y-m-d H:i');
+		            $dataEmailOrden = array('asunto' => "Ya realizamos el despacho de tu orden ".$idpedido,
+													'email' => $mail, 
+													'emailCopia' => EMAIL_PEDIDOS,
+													'envio'=>$envio,'codigo'=>$codigo);
+							sendEmail($dataEmailOrden,"email_notificacion_envio");
+		        }
+		        if($estado == "Cancelado"){
+		            
+
+		            	$request_detalle = $this->model->selectDetallesPedido($idpedido);
+                        foreach($request_detalle as $detalle){
+                            $idproducto = $detalle['productoid'];
+                            
+                            $cantidad = $detalle['cantidad'];
+                            $talle = null;
+                            $color = null;
+                            if($detalle['talle'] != null){
+                                $talle = $detalle['talle'];
+    		            	$request_talle = $this->model->selectTalle($talle);
+                                $talle = $request_talle['idstocktalle'];
+
+
+                            }
+                            if($detalle['color'] != null){
+                            $color = $detalle['color'];
+                            $request_color = $this->model->selectColor($color);
+        	            	$color = $request_color['idcolor'];
+
+                            }
+                                
+
+		                    $requestPedido = $this->model->updateStockCancelado($idproducto,$talle,$color,$cantidad,$idpedido);
+                        }
+                        
+                        $dataEmailOrden = array('asunto' => "Hemos cancelado tu pedido Número: ".$idpedido,
+													'email' => $mail, 
+													'emailCopia' => EMAIL_PEDIDOS,
+													'envio'=>$envio,'codigo'=>$codigo);
+							sendEmail($dataEmailOrden,"email_notificacion_cancelacion");
+		        }
+                if($envio == "Retiro centro"){
+                    $envio = 1;
+                }
+                if($envio == "Envio domicilio"){
+                    $envio = 2;
+                }
+                if($envio == "Envio correo"){
+                    $envio = 3;
+                }
+                if($envio == "Retiro showroom"){
+                    $envio = 4;
+                }
+                if($idtipopago == "Acordar"){
+                    $idtipopago = 6;
+                }
+                if($idtipopago == "Transferencia"){
+                    $idtipopago = 7;
+                }
 				if($idpedido == ""){
+
 					$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 				}else{
 					if($idtipopago == ""){
 						if($estado == ""){
 							$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 						}else{
-							$requestPedido = $this->model->updatePedido($idpedido,"","",$estado);
+							$requestPedido = $this->model->updatePedido($idpedido,null,null,$idtipopago,$estado,idtipo);
 							if($requestPedido){
 								$arrResponse = array("status" => true, "msg" => "Datos actualizados correctamente");
 							}else{
@@ -186,10 +269,12 @@ class Pedidos extends Controllers{
 							}
 						}
 					}else{
-						if($transaccion == "" or $idtipopago =="" or $estado == ""){
+						if($idtipopago =="" or $estado == ""){
 							$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 						}else{
-							$requestPedido = $this->model->updatePedido($idpedido,$transaccion,$idtipopago,$estado);
+
+							$requestPedido = $this->model->updatePedido($idpedido,$monto,$transaccion,$idtipopago,$estado,$mail,$envio,$direccion,$telefono,$fecha_pago,$cod_seguimiento,$fecha_retiro,$fecha_envio);
+
 							if($requestPedido){
 								$arrResponse = array("status" => true, "msg" => "Datos actualizados correctamente");
 							}else{

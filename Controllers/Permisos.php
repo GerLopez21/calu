@@ -44,6 +44,7 @@
 
 		public function setPermisos()
 		{
+
 			if($_POST)
 			{
 				$intIdrol = intval($_POST['idrol']);

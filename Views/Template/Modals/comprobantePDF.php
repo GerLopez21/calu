@@ -67,7 +67,7 @@
 		<tbody>
 			<tr>
 				<td class="wd33">
-					<img src="<?= media() ?>/tienda/images/logo.png" alt="Logo">
+					<img src="<?= media() ?>/tienda/images/logo.jpg" alt="Logo">
 				</td>
 				<td class="text-center wd33">
 					<h4><strong><?= NOMBRE_EMPESA ?></strong></h4>
@@ -78,37 +78,14 @@
 				<td class="text-right wd33">
 					<p>No. Orden <strong><?= $orden['idpedido'] ?></strong><br>
 						Fecha: <?= $orden['fecha'] ?>  <br>
-						<?php 
-							if($orden['tipopagoid'] == 1){
-						 ?>
-						Método Pago: <?= $orden['tipopago'] ?> <br>
-						Transacción: <?= $orden['idtransaccionpaypal'] ?>
-						<?php }else{ ?>
-						Método Pago: Pago contra entrega <br>
-						Tipo Pago: <?= $orden['tipopago'] ?>
-						<?php } ?>
+					
 					</p>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	<br>
-	<table class="tbl-cliente">
-		<tbody>
-			<tr>
-				<td class="wd10">NIT:</td>
-				<td class="wd40"><?= $cliente['nit'] ?></td>
-				<td class="wd10">Teléfono:</td>
-				<td class="wd40"><?= $cliente['telefono'] ?></td>
-			</tr>
-			<tr>
-				<td>Nombre:</td>
-				<td><?= $cliente['nombres'].' '.$cliente['apellidos'] ?></td>
-				<td>Dirección:</td>
-				<td><?= $cliente['direccionfiscal'] ?></td>
-			</tr>
-		</tbody>
-	</table>
+	
 	<br>
 	<table class="tbl-detalle">
 		<thead>

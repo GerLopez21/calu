@@ -21,11 +21,11 @@
                     <table class="table table-hover table-bordered" id="tablePedidos">
                       <thead>
                         <tr>
+                            <th>ID</th>
                           <th>Nombre</th>
                           <th>Tipo de pago</th>
                           <th>Fecha</th>
                           <th>Monto</th>
-                          <th>Direccion</th>
                           <th>Tipo Envio</th>
                           <th>Telefono</th>
                           <th>Estado</th>

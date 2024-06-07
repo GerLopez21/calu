@@ -1,4 +1,6 @@
 <?php 
+
+
 headerTienda($data);
 $arrProductos = $data['productos'];
  ?>
@@ -19,8 +21,13 @@ $arrProductos = $data['productos'];
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						 Categoría &nbsp;
 					</div>
+						<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter2">
+						&nbsp;&nbsp;
+						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
+						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+						 Ordenar por &nbsp;
+					</div>
 				</div>
-
 				<!-- Filter -->
 				<div class="dis-none panel-filter w-full p-t-10">
 					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
@@ -32,7 +39,7 @@ $arrProductos = $data['productos'];
 							<div class="flex-w p-t-4 m-r--5">
 								<?php 
 									if(count($data['categorias']) > 0){
-										foreach ($data['categorias'] as $categoria) {										
+										foreach ($data['categorias'] as $categoria) {	
 								 ?>
 								<a href="<?= base_url() ?>/tienda/categoria/<?= $categoria['idcategoria'].'/'.$categoria['ruta'] ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									<?= $categoria['nombre'] ?> <span> &nbsp;(<?= $categoria['cantidad'] ?>)</span>
@@ -45,11 +52,36 @@ $arrProductos = $data['productos'];
 						</div>
 					</div>
 				</div>
-			</div>
+			
+				<!-- Filter -->
+				<div class="dis-none panel-filter2 w-full p-t-10">
+					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+						<div class="filter-col4 p-b-27">
+							
 
+								<div class="flex-w p-t-4 m-r--5">
+								<a href="<?= base_url() ?>/tienda/orderby/<?= $data['ruta'].'/'?><?= 1 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Precio menor a mayor</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= $data['ruta'].'/'?><?= 2 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Precio mayor a menor</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= $data['ruta'].'/'?><?= 3 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Productos mas nuevos</b></span>
+								</a>
+								<a href="<?= base_url() ?>/tienda/orderby/<?= $data['ruta'].'/'?><?= 4 ?>" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+									<span><b>Productos mas viejos</b></span>
+								</a>
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            
 			<div class="row isotope-grid">
-			<?php 
-			if(!empty($arrProductos)){
+			<?php
+			if(count($arrProductos) > 0 ){ 
 				for ($p=0; $p < count($arrProductos); $p++) { 
 					$ruta = $arrProductos[$p]['ruta'];
 					if(count($arrProductos[$p]['images']) > 0 ){
@@ -75,6 +107,13 @@ $arrProductos = $data['productos'];
 								<span class="stext-105 cl3">
 									<?= SMONEY.formatMoney($arrProductos[$p]['precio']); ?>
 								</span>
+								<span class="stext-105 cl3">
+									<?php if ($arrProductos[$p]['stock'] <= 0) {
+										?>Agotado <?php
+									}elseif ($arrProductos[$p]['stock'] < 10){?>
+										Quedan pocos <?php
+									} ?>
+								</span>
 							</div>
 							<div class="block2-txt-child2 flex-r p-t-3">
 								<a href="#"
@@ -88,14 +127,13 @@ $arrProductos = $data['productos'];
 						</div>
 					</div>
 				</div>
-			<?php 
-				}
+			<?php }
+
 			}else{
-				?>
-			<p>No hay productos para mostrar <a href="<?= base_url() ?>/tienda"> Ver productos</a></p>
-			<?php 
-			} 
-			?>
+			 ?>
+			 <p>No hay productos para mostrar <a href="<?= base_url() ?>/tienda"> Ver productos</a></p>
+			<?php } ?>
+
 			</div>
 
 			<!-- Load more -->
@@ -104,14 +142,7 @@ $arrProductos = $data['productos'];
 					$prevPagina = $data['pagina'] - 1;
 					$nextPagina = $data['pagina'] + 1;
 			 ?>
-			<div class="flex-c-m flex-w w-full p-t-45">
-			<?php if($data['pagina'] > 1){ ?>
-				<a href="<?= base_url() ?>/tienda/categoria/<?= $data['infoCategoria']['idcategoria'].'/'.$data['infoCategoria']['ruta'].'/'.$prevPagina ?>" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"> <i class="fas fa-chevron-left"></i> &nbsp; Anterior </a>&nbsp;&nbsp;
-			<?php } ?>
-			<?php if($data['pagina'] != $data['total_paginas']){ ?>
-				<a href="<?= base_url() ?>/tienda/categoria/<?= $data['infoCategoria']['idcategoria'].'/'.$data['infoCategoria']['ruta'].'/'.$nextPagina ?>" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"> Siguiente &nbsp; <i class="fas fa-chevron-right"></i> </a>
-			<?php } ?>
-			</div>
+		
 			<?php 
 				}
 			 ?>

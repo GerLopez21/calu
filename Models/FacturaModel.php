@@ -13,33 +13,18 @@
 			}
 			$request = array();
 			$sql = "SELECT p.idpedido,
-							p.referenciacobro,
-							p.idtransaccionpaypal,
-							p.personaid,
 							DATE_FORMAT(p.fecha, '%d/%m/%Y') as fecha,
 							p.costo_envio,
 							p.monto,
 							p.tipopagoid,
-							t.tipopago,
+							p.tipopago,
 							p.direccion_envio,
 							p.status
 					FROM pedido as p
-					INNER JOIN tipopago t
-					ON p.tipopagoid = t.idtipopago
-					WHERE p.idpedido =  $idpedido ".$busqueda;
+					WHERE p.idpedido =  $idpedido ";
 			$requestPedido = $this->select($sql);
 			if(!empty($requestPedido)){
-				$idpersona = $requestPedido['personaid'];
-				$sql_cliente = "SELECT idpersona,
-										nombres,
-										apellidos,
-										telefono,
-										email_user,
-										nit,
-										nombrefiscal,
-										direccionfiscal 
-								FROM persona WHERE idpersona = $idpersona ";
-				$requestcliente = $this->select($sql_cliente);
+	
 				$sql_detalle = "SELECT p.idproducto,
 											p.nombre as producto,
 											d.precio,
@@ -49,7 +34,7 @@
 									ON d.productoid = p.idproducto
 									WHERE d.pedidoid = $idpedido";
 				$requestProductos = $this->select_all($sql_detalle);
-				$request = array('cliente' => $requestcliente,
+				$request = array(
 								'orden' => $requestPedido,
 								'detalle' => $requestProductos
 								 );

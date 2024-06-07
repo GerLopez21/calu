@@ -73,6 +73,13 @@ class PaginasModel extends Mysql
 		$request = $this->update($sql,$arrData);
 		return $request;
 	}
+	public function checkInactive(){
+		$sql = "SELECT *
+				FROM post  
+				WHERE titulo = 'Inactiva'";
+		$request = $this->select($sql);
+		return $request;
+	}	
 }
 
  ?>

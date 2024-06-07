@@ -4,11 +4,26 @@
     require 'Libraries/phpmailer/Exception.php';
     require 'Libraries/phpmailer/PHPMailer.php';
     require 'Libraries/phpmailer/SMTP.php';
-
+    
+    function inactive(){
+        require_once ("Models/PaginasModel.php");
+        $objPaginas = new PaginasModel();
+        $request = $objPaginas->checkInactive();
+        if($request['status'] == 1){
+        
+            return 1;
+        }else{
+            return 2;
+        }
+    }
 	//Retorla la url del proyecto
 	function base_url()
 	{
 		return BASE_URL;
+	}
+	function base_url_inactive()
+	{
+		return BASE_URL.'/tienda/inactive';
 	}
     //Retorla la url de Assets
     function media()
@@ -35,6 +50,16 @@
         $view_footer = "Views/Template/footer_tienda.php";
         require_once ($view_footer);        
     }
+    function headerInactive($data="")
+    {
+        $view_header = "Views/Template/header_inactive.php";
+        require_once ($view_header);
+    }
+    function footerInactive($data="")
+    {
+        $view_footer = "Views/Template/footer_inactive.php";
+        require_once ($view_footer);        
+    }
 	//Muestra información formateada
 	function dep($data)
     {
@@ -43,10 +68,34 @@
         $format .= print_r('</pre>');
         return $format;
     }
+    function cambiaFechaANormal($fecha){
+
+        if ($fecha <>''){
+            $auxFecha = explode(" ", $fecha);
+            $mifecha = explode("-",$auxFecha[0]); 
+            $lafecha=$mifecha[2]."/".$mifecha[1]."/".$mifecha[0]; 
+
+            return $lafecha;   
+
+        }
+        return '' ;
+    } 
+    function sumaFechas($fecha,$ndias){
+          if (preg_match("/[0-9]{1,2}\/[0-9]{1,2}\/([0-9][0-9]){1,2}/",$fecha))
+                  list($dia,$mes,$año)=explode("/", $fecha);
+          if (preg_match("/[0-9]{1,2}-[0-9]{1,2}-([0-9][0-9]){1,2}/",$fecha)) 
+                list($dia,$mes,$año)=explode("-",$fecha);
+                    $nueva = mktime(0,0,0, $mes,$dia,$año) + $ndias * 24 * 60 * 60;
+                    $nuevafecha=date("d/m/Y",$nueva);
+          return ($nuevafecha);            
+    }
     function getModal(string $nameModal, $data)
     {
         $view_modal = "Views/Template/Modals/{$nameModal}.php";
-        require_once $view_modal;        
+
+
+        require_once $view_modal; 
+
     }
     function getFile(string $url, $data)
     {
@@ -60,22 +109,27 @@
     {
         if(ENVIRONMENT == 1){
             //ESTO COMENTE SOBRE EL ENVIO DE EMAILS
-            // $asunto = $data['asunto'];
-            // $emailDestino = $data['email'];
-            // $empresa = NOMBRE_REMITENTE;
-            // $remitente = EMAIL_REMITENTE;
-            // $emailCopia = !empty($data['emailCopia']) ? $data['emailCopia'] : "";
-            // //ENVIO DE CORREO
-            // $de = "MIME-Version: 1.0\r\n";
-            // $de .= "Content-type: text/html; charset=UTF-8\r\n";
-            // $de .= "From: {$empresa} <{$remitente}>\r\n";
-            // $de .= "Bcc: $emailCopia\r\n";
-            // ob_start();
-            // require_once("Views/Template/Email/".$template.".php");
-            // $mensaje = ob_get_clean();
-            // $send = mail($emailDestino, $asunto, $mensaje, $de);
-            // return $send;
-            return false;
+             $asunto = $data['asunto'];
+             $emailDestino = $data['email'];
+             $empresa = NOMBRE_REMITENTE;
+             $remitente = EMAIL_REMITENTE;
+             $emailCopia = !empty($data['emailCopia']) ? $data['emailCopia'] : "";
+
+             //ENVIO DE CORREO
+             $de = "MIME-Version: 1.0\r\n";
+             $de .= "Content-type: text/html; charset=UTF-8\r\n";
+             $de .= "From: {$empresa} <{$remitente}>\r\n";
+             $de .= "Bcc: $emailCopia\r\n";
+
+             ob_start();
+
+             require_once("Views/Template/Email/".$template.".php");
+
+             $mensaje = ob_get_clean();
+
+             $send = mail($emailDestino, $asunto, $mensaje, $de);
+             return $send;
+            //return false;
         }else{
            //Create an instance; passing `true` enables exceptions
             $mail = new PHPMailer(true);

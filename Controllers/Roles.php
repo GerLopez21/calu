@@ -2,7 +2,7 @@
 
 	class Roles extends Controllers{
 		public function __construct()
-		{
+		{   
 			parent::__construct();
 			session_start();
 			//session_regenerate_id(true);
@@ -16,6 +16,7 @@
 
 		public function Roles()
 		{
+
 			if(empty($_SESSION['permisosMod']['r'])){
 				header("Location:".base_url().'/dashboard');
 			}

@@ -95,7 +95,30 @@
             </a>
         </li>
          <?php } ?>
-
+        <?php if(!empty($_SESSION['permisos'][10]['r'])){ ?>
+        <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/colores">
+                <i class="app-menu__icon fa fa-paint-brush" aria-hidden="true"></i>
+                <span class="app-menu__label">Colores</span>
+            </a>
+        </li>
+        <?php } ?>
+         <?php if(!empty($_SESSION['permisos'][11]['r'])){ ?>
+        <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/talles">
+                <i class="app-menu__icon fa fa-arrows-v" aria-hidden="true"></i>
+                <span class="app-menu__label">Talles</span>
+            </a>
+        </li>
+        <?php } ?>
+        <?php if(!empty($_SESSION['permisos'][11]['r'])){ ?>
+        <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/movimientos">
+                <i class="app-menu__icon fa-arrow-right-arrow-left aria-hidden="true"></i>
+                <span class="app-menu__label">Movimientos de stock</span>
+            </a>
+        </li>
+        <?php } ?>
         <li>
             <a class="app-menu__item" href="<?= base_url(); ?>/logout">
                 <i class="app-menu__icon fa fa-sign-out" aria-hidden="true"></i>

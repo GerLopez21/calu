@@ -180,8 +180,11 @@ function fntPermisos(idrol){
 
     request.onreadystatechange = function(){
         if(request.readyState == 4 && request.status == 200){
+                                                alert(request.responseText)
+
             document.querySelector('#contentAjax').innerHTML = request.responseText;
             $('.modalPermisos').modal('show');
+            alert(document.querySelector('#formPermisos'))
             document.querySelector('#formPermisos').addEventListener('submit',fntSavePermisos,false);
         }
     }

@@ -24,7 +24,7 @@
 
 				<div class="col-sm-6 col-lg-4 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						Cotacto
+						Contacto
 					</h4>
 
 					<p class="stext-107 cl7 size-201">
@@ -76,18 +76,48 @@
 			<div class="p-t-40">
 				<p class="stext-107 cl6 txt-center">
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-					<?= NOMBRE_EMPESA; ?> | <?= WEB_EMPRESA; ?> | <a href="https://colorlib.com" target="_blank">Colorlib</a>
+					<?= NOMBRE_EMPESA; ?> | <?= WEB_EMPRESA; ?> 
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 				</p>
 			</div>
-		</div>
-	</footer>
-	<!-- Back to top -->
-	<div class="btn-back-to-top" id="myBtn">
+					  <div class="whatsapp_chat_support wcs_fixed_right" id="button-w">
+    <div class="wcs_button_label">
+            Contáctanos
+        </div>  
+    <div class="wcs_button wcs_button_circle">
+        <span class="fa fa-whatsapp"></span>
+    </div>  
+ 
+    <div class="wcs_popup">
+        <div class="wcs_popup_close">
+            <span class="fa fa-close"></span>
+        </div>
+        <div class="wcs_popup_header">
+            <span class="fa fa-whatsapp"></span>
+            <strong>Servicio al cliente</strong>
+            
+            <div class="wcs_popup_header_description">¿Necesidad de ayuda? Chatea con nosotros en Whatsapp</div>
+
+        </div>  
+        <div class="wcs_popup_input" 
+            data-number="5492612508912">
+            <input type="text" placeholder="Escribir pregunta!" />
+            <i class="fa fa-play"></i>
+        </div>
+
+    </div>
+    <div class="btn-back-to-top" id="myBtn">
 		<span class="symbol-btn-back-to-top">
 			<i class="zmdi zmdi-chevron-up"></i>
 		</span>
 	</div>
+		</div>
+
+</div>
+	</footer>
+	<!-- Back to top -->
+	
+	
 	<script>
 	    const base_url = "<?= base_url(); ?>";
 		const smony = "<?= SMONEY; ?>";
@@ -123,6 +153,22 @@
 	<script src="<?= media();?>/js/functions_admin.js"></script>
 	<script src="<?= media() ?>/js/functions_login.js"></script>
 	<script src="<?= media() ?>/tienda/js/functions.js"></script>
+  <!-- Button Whatsapp Structure -->
 
+
+<script>
+     AOS.init();
+    </script>
+    <!-- jQuery 1.8+ -->
+<script src="/tienda/vendor/plugin/components/jQuery/jquery-1.11.3.min.js"></script>
+    <!-- Plugin JS file -->
+<script defer src="<?= media() ?>/tienda/vendor/plugin/components/moment/moment.min.js"></script>
+<script defer src="<?= media() ?>/tienda/vendor/plugin/components/moment/moment-timezone-with-data.min.js"></script> <!-- spanish language (es) -->
+<script src="<?= media() ?>/tienda/vendor/plugin/whatsapp-chat-support.js"></script>
+<script>
+   $('#button-w').whatsappChatSupport({
+        defaultMsg : '',
+    });
+</script>
 </body>
 </html>

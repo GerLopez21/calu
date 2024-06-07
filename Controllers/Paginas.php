@@ -93,7 +93,7 @@ class Paginas extends Controllers{
 		if($_POST){
 			//dep($_POST);
 			//dep($_FILES);
-			if(empty($_POST['txtTitulo']) || empty($_POST['txtContenido']) || empty($_POST['listStatus']) )
+			if(empty($_POST['txtTitulo']) || empty($_POST['listStatus']) )
 			{
 				$arrResponse = array("status" => false, "msg" => 'Datos incorrectos.');
 			}else{

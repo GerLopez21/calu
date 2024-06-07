@@ -11,7 +11,12 @@
 
 		public function home()
 		{
-			$pageContent = getPageRout('inicio');
+            $inactive = inactive();
+
+		    if($inactive == 1 && empty($_SESSION['login'])){
+		      header("Location:".base_url_inactive());
+
+		    }			$pageContent = getPageRout('inicio');
 			$data['page_tag'] = NOMBRE_EMPESA;
 			$data['page_title'] = NOMBRE_EMPESA;
 			$data['page_name'] = "tienda_virtual";
@@ -21,6 +26,8 @@
 			$data['productos'] = $this->getProductosT();
 			$this->views->getView($this,"home",$data); 
 		}
+
+
 
 	}
  ?>

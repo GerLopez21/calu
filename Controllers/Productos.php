@@ -1,5 +1,7 @@
 <?php 
+
 	class Productos extends Controllers{
+
 		public function __construct()
 		{
 			parent::__construct();
@@ -28,11 +30,12 @@
 		{
 			if($_SESSION['permisosMod']['r']){
 				$arrData = $this->model->selectProductos();
+
 				for ($i=0; $i < count($arrData); $i++) {
 					$btnView = '';
 					$btnEdit = '';
 					$btnDelete = '';
-
+					$btnStock = '';
 					if($arrData[$i]['status'] == 1)
 					{
 						$arrData[$i]['status'] = '<span class="badge badge-success">Activo</span>';
@@ -50,13 +53,60 @@
 					if($_SESSION['permisosMod']['d']){	
 						$btnDelete = '<button class="btn btn-danger btn-sm" onClick="fntDelInfo('.$arrData[$i]['idproducto'].')" title="Eliminar producto"><i class="far fa-trash-alt"></i></button>';
 					}
-					$arrData[$i]['options'] = '<div class="text-center">'.$btnView.' '.$btnEdit.' '.$btnDelete.'</div>';
+					if($_SESSION['permisosMod']['r']){	
+					//	$btnStock = '<button class="btn btn-primary btn-sm" onClick="fntEditStock('.$arrData[$i]['idproducto'].')" title="Actualizar stock producto"><i class="fa-solid fa-list"></i></button>';
+   					 $btnStock .= ' <a title="Actualizar stock producto" href="'.base_url().'/productos/stock/'.$arrData[$i]['idproducto'].'" target="_blanck" class="btn btn-info btn-sm"> <i class="far fa-file-alt"></i> </a>';
+
+					}
+					$arrData[$i]['options'] = '<div class="text-center">'.$btnView.' '.$btnEdit.' '.$btnDelete.' '.$btnStock.'</div>';
 				}
 				echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
 			}
 			die();
 		}
+	 public function stock($idproducto){
+		if(empty($_SESSION['permisosMod']['r'])){
+				header("Location:".base_url().'/dashboard');
+			}
+			$_SESSION['producto'] = $idproducto;
+			$data['page_tag'] = "Stock Producto";
+			$data['page_title'] = "STOCK PRODUCTO <small>Calu</small>";
+			$data['page_name'] = "stock";
+			$data['producto'] = $idproducto;
 
+			$data['page_functions_js'] = "functions_stocks.js";
+			
+			$this->views->getView($this,"stock",$data);
+	}
+    public function getStock(){
+
+        $idproducto = $_SESSION['producto'];
+		
+		$arrData = $this->model->selectStockProducto($idproducto);
+		$total = 0;
+	    for ($i=0; $i < count($arrData); $i++) {
+				$btnView = '';
+				$btnEdit = '';
+				$btnDelete = '';
+				
+				$arrData[$i]['producto'] = $arrData[$i]['productoid'];
+
+				$arrData[$i]['talle'] = $arrData[$i]['nombretalle'];
+				$arrData[$i]['color'] = $arrData[$i]['nombre'];
+				$arrData[$i]['cantidad'] = $arrData[$i]['cantidad'];
+				$arrData[$i]['stock'] = $arrData[$i]['stock'];
+				$arrData[$i]['fotoreferencia'] = $arrData[$i]['fotoreferencia'];
+				$arrData[$i]['sumaindividual'] = $arrData[0]['sumaindividual'];
+
+			
+				if($_SESSION['permisosMod']['u']){
+					$btnEdit = '<button class="btn btn-primary  btn-sm" onClick="fntEditInfo(this,'.$arrData[$i]['idstock'].')" title="Editar pedido"><i class="fas fa-pencil-alt"></i></button>';
+				}
+				$arrData[$i]['options'] = '<div class="text-center">'.$btnEdit.'</div>';
+			}
+		
+			echo json_encode($arrData,JSON_UNESCAPED_UNICODE);
+	}
 		public function setProducto(){
 			if($_POST){
 				if(empty($_POST['txtNombre']) || empty($_POST['listCategoria']) || empty($_POST['txtPrecio']) || empty($_POST['listStatus']) )
@@ -70,14 +120,9 @@
 					$intCategoriaId = intval($_POST['listCategoria']);
 					$strPrecio = strClean($_POST['txtPrecio']);
 					$intStock = intval($_POST['txtStock']);
-					$intStock1 = intval($_POST['txtStock1']);
-					$intStock2 = intval($_POST['txtStock2']);
-					$intStock3 = intval($_POST['txtStock3']);
-					$intStock4 = intval($_POST['txtStock4']);
-					$intStock5 = intval($_POST['txtStock5']);
-					$intStock6 = intval($_POST['txtStock6']);
-					$intStock7 = intval($_POST['txtStock7']);
-					$intStock8 = intval($_POST['txtStock8']);
+					$intPrecioDescuento = intval($_POST['txtDescuento']);
+					$intObl = intval($_POST['listObl']);
+
 					$intStatus = intval($_POST['listStatus']);
 					$request_producto = "";
 
@@ -93,16 +138,10 @@
 																		$intCategoriaId,
 																		$strPrecio, 
 																		$intStock,
-																		$intStock1,
-																		$intStock2,
-																		$intStock3,
-																		$intStock4,
-																		$intStock5,
-																		$intStock6,
-																		$intStock7,
-																		$intStock8, 
+																		$intPrecioDescuento,
 																		$ruta,
-																		$intStatus);
+																		$intStatus,
+																		$intObl);
 						}
 					}else{
 						$option = 2;
@@ -113,22 +152,18 @@
 																		$intCategoriaId,
 																		$strPrecio, 
 																		$intStock,
-																		$intStock1,
-																		$intStock2,
-																		$intStock3,
-																		$intStock4,
-																		$intStock5,
-																		$intStock6,
-																		$intStock7,
-																		$intStock8,  
+																		$intPrecioDescuento,
 																		$ruta,
-																		$intStatus
+																		$intStatus,
+																		$intObl
 																	);
 						}
 					}
 					if($request_producto > 0 )
 					{
+					    $fecha = date('Y-m-d H:m:s');
 						if($option == 1){
+						    $this->model->insertMovimiento('Carga',1,'Carga general producto',$request_producto,$fecha,null,$intStock);
 							$arrResponse = array('status' => true, 'idproducto' => $request_producto, 'msg' => 'Datos guardados correctamente.');
 						}else{
 							$arrResponse = array('status' => true, 'idproducto' => $idProducto, 'msg' => 'Datos Actualizados correctamente.');

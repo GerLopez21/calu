@@ -23,7 +23,7 @@
 					if($_SESSION['permisosMod']['r'] and $_SESSION['userData']['idrol'] == RCLIENTES){
 						$idpersona = $_SESSION['userData']['idpersona'];
 					}
-					$data = $this->model->selectPedido($idpedido,$idpersona);
+					$data = $this->model->selectPedido($idpedido);
 					if(empty($data)){
 						echo "Datos no encontrados";
 					}else{

@@ -6,6 +6,9 @@ $arrImages = $arrProducto['images'];
 $rutacategoria = $arrProducto['categoriaid'].'/'.$arrProducto['ruta_categoria'];
 $urlShared = base_url()."/tienda/producto/".$arrProducto['idproducto']."/".$arrProducto['ruta'];
 $asd = "disabled";
+$arrStock = $data['stock'];
+$arrTalles = $data['tallesycolores'];
+$tallescargados = array();
  ?>
 <br><br><br>
 <hr>
@@ -63,14 +66,71 @@ $asd = "disabled";
 						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
 							<?= $arrProducto['nombre']; ?>
 						</h4>
+						<?php
+						if($arrProducto['preciodescuento'] > 0){ ?>
+						<span class="mtext-106 cl2">
+						<del>	<?= SMONEY.formatMoney($arrProducto['precio']); ?></del>
+    					&nbsp;&nbsp;&nbsp;&nbsp;		<?= SMONEY.formatMoney($arrProducto['preciodescuento']); ?>
+
+						</span>
+					   <?php	}else{ ?>
 						<span class="mtext-106 cl2">
 							<?= SMONEY.formatMoney($arrProducto['precio']); ?>
+							
 						</span>
+						<?php } ?>
 						<!-- <p class="stext-102 cl3 p-t-23"></p> -->
 						<?= $arrProducto['descripcion']; ?>
 						<!--  -->
+						 <?php if($arrProducto['stock']>0){
+                                    ?>
 						<div class="p-t-33">
-						<div class="form-group col-xl">
+						      <div class="col-12">
+            <div data-variant="TALLE" class="mtext-106 js-btn-variation-container text-sm-left">
+                <?php if(!empty($arrTalles)){?>
+                          <label for="variation_1" class="form-label mb-1"> TALLE: &nbsp;
+                          <?php } ?>
+                <strong class="js-insta-variation-label"></strong>
+              </label>
+                        
+              <div class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
+                                               
+                <?php
+                 for ($i=0; $i < count($arrTalles); $i++) { 
+                     if(!in_array($arrTalles[$i]['nombretalle'],$tallescargados)){
+                     ?>
+                                <div class="col-auto">
+                     <a data-option="<?= $arrTalles[$i]['nombretalle'];?>" style="border-color:#abaaaa;" class="js-btn-variation btn btn-<?php echo $arrTalles[$i]['nombretalle'] ?> btn-talle mr-2 mb-3 TALLE" id="talle" name="talle" value="<?= $arrTalles[$i]['nombretalle'];?>">
+                        <?= $arrTalles[$i]['nombretalle'];?>
+                    </a>
+                    <?php array_push($tallescargados,$arrTalles[$i]['nombretalle']);
+
+
+                            ;?>
+                </div>
+                <?php
+                }}
+
+                ?>
+                     
+                              </div>
+            </div>
+        </div>
+        <div id="containerColor" class="col-12 js-talle js-colores-80x60 notblock">
+            <div data-variant="TALLE" class="mtext-106 js-btn-variation-container text-sm-left">
+                          <label for="variation_1" class="form-label mb-1"> COLOR: &nbsp;
+                <strong class="js-insta-variation-label-color"></strong>
+              </label>
+              <div class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
+                                <div id="containerFilas" class="disp"></div>
+                                <br>
+                                <div id="containerFilas2" class="disp"></div>
+
+                            </div>
+                                  
+            </div>
+        </div>
+   						<div class="form-group col-xl">
 
 						<div class="wrap-num-product flex-w m-r-20 m-tb-10">
 							
@@ -84,73 +144,19 @@ $asd = "disabled";
 											<i class="fs-16 zmdi zmdi-plus"></i>
 										</div>
 									</div>
-                            <div class="form-group col-bg">
-                                <label for="listTalles">Seleccione los talles</label>
-								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-								<select id="listTalles" class="js-select2" name="listTalles">
-									
-											<?php if($arrProducto['stocktalle1'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle1']?>" disabled><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
-											<?php }else{?>
-												<option value="85"><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
-											<?php } ?>
-											<?php if($arrProducto['stocktalle2'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle2']?>" disabled><?="Talle 90              Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
-											<?php }else{?>
-												<option value="90"><?="Talle 90               Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle3'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle3']?>" disabled><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
-											<?php }else{?>
-												<option value="95"><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle4'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle4']?>" disabled><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
-											<?php }else{?>
-												<option value="100"><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle5'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle5']?>" disabled><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
-											<?php }else{?>
-												<option value="105"><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle6'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle6']?>" disabled><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
-											<?php }else{?>
-												<option value="110"><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle7'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle7']?>" disabled><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
-											<?php }else{?>
-												<option value="115"><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle8'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle8']?>" disabled><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
-											<?php }else{?>
-												<option value="120"><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
-
-											<?php } ?>
-										 	
-
-                                </select>
-								<div class="dropDownSelect2"></div>
-							</div>	
-                            </div>
+                            
 							  
 							</div>
-                
+                               
 									<button id="<?= openssl_encrypt($arrProducto['idproducto'],METHODENCRIPT,KEY); ?>" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
 										Agregar al carrito
 									</button>
-									
+															<?php }else{ ?>
+
 									</div>			
-							
+									<span class="mtext-106 cl2">
+    						         SIN STOCK   						</span>
+								<?php } ?>
 							
 						</div>
 						<!--  -->
