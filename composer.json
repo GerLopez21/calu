@@ -1,5 +1,6 @@
 {
     "require": {
-        "mercadopago/dx-php": "^2.5"
+        "mercadopago/dx-php": "^3.0",
+        "doctrine/common": "^3.4"
     }
 }

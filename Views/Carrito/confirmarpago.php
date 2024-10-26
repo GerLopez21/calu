@@ -1,19 +1,40 @@
 <?php 
 headerTienda($data);
 
+
 // SDK de Mercado Pago
 require './vendor/autoload.php';
 $productos="";
 $subtotal = 0;
 $total = 0;
 foreach ($_SESSION['arrCarrito'] as $producto) {
-	$subtotal += $producto['precio'] * $producto['cantidad'];
-	//$arrProductos=array();
-	//array_push($arrProductos,$producto['producto']);
+    if($producto['preciodescuento'] > 0){
+        	$subtotal += $producto['preciodescuento'] * $producto['cantidad'];
+
+    }else{
+                	$subtotal += $producto['precio'] * $producto['cantidad'];
+
+    }
 	$productos = $producto['producto']."".$productos;
 }
-$total = $subtotal + COSTOENVIO;
-$ACCESS_TOKEN='TEST-920054571392136-111417-c144e04d1b1c4a75bc8941d7b7aa2219-213297333';
+if($data['tipoenvio'] == 1){
+    $envio = 'Retiro centro ($0.00)';
+    $total = $subtotal;
+}
+if($data['tipoenvio'] == 2){
+    $envio = 'Envio domicilio (Se informará monto al finalizar compra)';
+    $total = $subtotal;
+}
+if($data['tipoenvio'] == 3){
+    $envio = 'Envio correo (Se informorá monto al finalizar compra)';
+    $total = $subtotal;
+}
+if($data['tipoenvio'] == 4){
+    $envio = 'Retiro local ($0.00)';
+    $total = $subtotal;
+}
+$total = $subtotal;
+
 
 // Agrega credenciales
 try {
@@ -27,12 +48,15 @@ $item->quantity = $producto['cantidad'];
 $item->unit_price = $total;
 $preference->items = array($item);
 $preference->save();
+
+    
 }catch(Throwable $e){
 	print_r($e);die();
 	}
 
 
 ?>
+
 
 <script
 	src="https://sdk.mercadopago.com/js/v2">
@@ -85,29 +109,38 @@ $preference->save();
 					<div>
 					<h3>SELECCIONE EL TIPO DE PAGO</h3>
 					<br>
+					
 						<div>
-									<label >
-										<input type="radio" checked="" class="opcionPago" id="transferencia" name="transferencia" value="transferencia">
-										<i class="zmdi zmdi-balance"></i>
-
-										<span><b>Transferencia bancaria</b></span><br>
-										<span>Al finalizar la compra podrás visualizar los datos de la cuenta bancaria a la que 
+									<label  class="span-check-transferencia" >
+									    <span style="font-family:Poppins-Medium; font-size:14px; text-align: center;"><b><input style="display:inline;" type="checkbox" class="opcionPago"  id="transferencia" name="transferencia" value="Transferencia bancaria">&nbspTRANSFERENCIA BANCARIA</b></span>
+										<br>
+										<span style="font-family:Poppins-Medium;display:flex;cursor:pointer;">
+										    Al finalizar la compra podrás visualizar los datos de la cuenta bancaria a la que 
 											debes realizar la transferencia
-										</span>
+                                            </span>
+                                            
+									 
 
 									</label>
 								</div>
-								<b>-------------------------------------</b>
-								<div>
-									<label>
-										<input type="radio" id="acordar" class="opcionPago" name="acordar" value="acordar">
-										<i class="zmdi zmdi-comments"></i>
-										<span><b>Acordar metodo de pago</b></span><br>
-										<span>Al finalizar la compra nos pondremos en contacto con vos para coordinar tu pago</span>
+
+									<div>
+								    	<label  class="span-check-acordar" >
+									    <span style="font-family:Poppins-Medium; font-size:14px; text-align: center;"><b><input style="display:inline;" type="checkbox" class="opcionPago"  id="acordar" name="acordar" value="Acordar pago">&nbspACORDAR PAGO</b></span>
+										<br>
+										<span style="font-family:Poppins-Medium;display:flex;cursor:pointer;">
+										    Al finalizar la compra nos pondremos en contacto con vos para coordinar tu pago, en este caso contas con la posibilidad de abonar a través de efectivo (SOLO VÁLIDO EN CASO
+										    DE TIPO DE ENVIO RETIRO EN EL SHOWROOM Y ENVÍO A DOMICILIO DE GRAN MENDOZA O ZONA ESTE) y también tenes la posibilidad que te enviemos un link de pago para abonar con tarjeta de crédito (con recargo)
+                                            </span>
+                                            
+									 
+
 									</label>
+									
 								</div>
-								<b>-------------------------------------</b>
-								<div class="cho-container">
+
+
+								<!-- <div class="cho-container">
 									<label>
 									<h3>Mercado  Pago    <img src="<?= media()?>/images/iso-mercadopago.png" alt="Icono de Mercado Pago" class="ml-space-sm" width="64" height="40"></h3>
 
@@ -119,7 +152,7 @@ $preference->save();
 										  
 											  mp.checkout({
 											    preference: {
-											      id: '<?php echo $preference->id;?>'
+											      id: '?php echo $preference->id;?>'
 											    },
 											    render: {
 											      container: '.cho-container',
@@ -129,7 +162,7 @@ $preference->save();
 											</script>
 									</label>
 											
-								</div>
+								</div> -->
 					
 					</div>
 				</div> 
@@ -160,8 +193,8 @@ $preference->save();
 						</div>
 
 						<div class="size-209">
-							<span class="mtext-110 cl2">
-								<?= SMONEY.formatMoney(COSTOENVIO) ?>
+							<span class="stext-110 cl2">
+								<?= $envio ?>
 							</span>
 						</div>
 					</div>
@@ -180,7 +213,7 @@ $preference->save();
 					</div>
 					<hr>
 					<div id="divConfirmarPago" class="notblock">
-					<button type="submit" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Procesar pedido</button>
+					<button type="submit" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Confirmar pedido</button>
 							
 											</div>
 	</div>

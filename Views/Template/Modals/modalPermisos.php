@@ -29,6 +29,7 @@
                         </thead>
                         <tbody>
                             <?php 
+
                                 $no=1;
                                 $modulos = $data['modulos'];
                                 for ($i=0; $i < count($modulos); $i++) { 
@@ -45,6 +46,8 @@
                             <td>
                                 <?= $no; ?>
                                 <input type="hidden" name="modulos[<?= $i; ?>][idmodulo]" value="<?= $idmod ?>" required >
+                                <?php
+                                dep($i);?>
                             </td>
                             <td>
                                 <?= $modulos[$i]['titulo']; ?>

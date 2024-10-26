@@ -2,6 +2,9 @@
 
 $orden = $data['pedido']['orden'];
 $detalle = $data['pedido']['detalle'];
+$carrito = $data['datosCarrito'];
+$seguimiento = $data['urlSeguimiento'];
+
  ?>
 
 <!DOCTYPE html>
@@ -32,6 +35,8 @@ $detalle = $data['pedido']['detalle'];
 <body>
 	<div>
 		<br>
+		<h2>Gracias por comprar en CALU MENDOZA STORE</h2>
+
 		<p class="text-center">Se ha generado una orden, a continuación encontrarás los datos.</p>
 		<br>
 		<hr>
@@ -39,7 +44,7 @@ $detalle = $data['pedido']['detalle'];
 		<table>
 			<tr>
 				<td width="33.33%">
-					<img class="logo" src="<?= media(); ?>/tienda/images/logo.png" alt="Logo">
+					<img class="logo" src="<?= media(); ?>/tienda/images/logo.jpg" height="80px" width="100px" alt="Logo">
 				</td>
 				<td width="33.33%">
 					<div class="text-center">
@@ -56,15 +61,8 @@ $detalle = $data['pedido']['detalle'];
 						<p>
 							No. Orden: <strong><?= $orden['idpedido'] ?></strong><br>
                             Fecha: <?= $orden['fecha'] ?> <br>
-                            <?php 
-								if($orden['tipopagoid'] == 1){
-							 ?>
+                        
                             Método Pago: <?= $orden['tipopago'] ?> <br>
-                            Transacción: <?= $orden['idtransaccionpaypal'] ?>
-                        <?php }else{ ?>
-                        	Método Pago: Pago contra entrega <br>
-							Tipo Pago: <?= $orden['tipopago'] ?>
-                        <?php } ?>
 						</p>
 					</div>
 				</td>				
@@ -73,21 +71,50 @@ $detalle = $data['pedido']['detalle'];
 		<table>
 			<tr>
 		    	<td width="140">Nombre:</td>
-		    	<td><?= $_SESSION['userData']['nombres'].' '.$_SESSION['userData']['apellidos'] ?></td>
+		    	<td><?= $orden['nombre_cliente'] ?></td>
 		    </tr>
 		    <tr>
 		    	<td>Teléfono</td>
 		    	<td><?= $_SESSION['userData']['telefono'] ?></td>
 		    </tr>
+		   
+            <tr>
+		    	<td><strong> Datos de envío: </strong></td>
+		    </tr>
 		    <tr>
 		    	<td>Dirección de envío:</td>
-		    	<td><?= $orden['direccion_envio'] ?></td>
+		    	<td><?= $orden['direccion_envio']?$orden['direccion_envio']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>Ciudad:</td>
+		    	<td><?= $orden['ciudad_cliente']?$orden['ciudad_cliente']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>Código:</td>
+		    	<td><?= $orden['codigo_postal']?$orden['codigo_postal']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>País:</td>
+		    	<td><?= $orden['pais_cliente']?$orden['pais_cliente']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>Provincia:</td>
+		    	<td><?= $orden['provincia_cliente']?$orden['provincia_cliente']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>Tipo de envío:</td>
+		    	<td><?= $orden['tipoenvio']?$orden['tipoenvio']:"-" ?></td>
+		    </tr>
+		    <tr>
+		    	<td>Seguí el estado de tu pedido desde este link:</td>
+		    	<td><?= $seguimiento ?></td>
 		    </tr>
 		</table>
 		<table>
 		  <thead class="table-active">
 		    <tr>
 		      <th>Descripción</th>
+		      <th></th>
 		      <th class="text-right">Precio</th>
 		      <th class="text-center">Cantidad</th>
 		      <th class="text-right">Importe</th>
@@ -95,15 +122,33 @@ $detalle = $data['pedido']['detalle'];
 		  </thead>
 		  <tbody id="detalleOrden">
 		  	<?php 
-		  		if(count($detalle) > 0){
+		  		if(count($carrito) > 0){
 		  			$subtotal = 0;
-		  			foreach ($detalle as $producto) {
-		  				$precio = formatMoney($producto['precio']);
-		  				$importe = formatMoney($producto['precio'] * $producto['cantidad']);
-		  				$subtotal += $importe;
+		  			foreach ($carrito as $producto) {
+		  			    if($producto['preciodescuento'] > 0){
+                          $precio = formatMoney($producto['preciodescuento']);
+		  			    }else{
+                          $precio = formatMoney($producto['precio']);
+		  			        
+		  			    }
+		  			     if($producto['preciodescuento'] > 0){
+		  				$importe = formatMoney($producto['preciodescuento'] * $producto['cantidad']);
+		  			    }else{
+                          $precio = formatMoney($producto['precio']);
+		  			        
+		  			    }
+		  			    if($producto['preciodescuento'] > 0){
+		  				$subtotal += $producto['preciodescuento'] * $producto['cantidad'];
+		  			    }else{
+		  				$subtotal += $producto['precio'] * $producto['cantidad'];
+		  			        
+		  			    }
 		  	 ?>
 		    <tr>
-		      <td><?= $producto['producto'] ?></td>
+		      <td><?= $producto['producto']."-".$producto['nombretalle']."-".$producto['nombrecolor'] ?>
+		      				
+						      <td class="text-right">	<img  src="<?=$producto['imagen']?>" height="20px" alt="Logo"></td></td>
+
 		      <td class="text-right"><?= SMONEY.' '.$precio ?></td>
 		      <td class="text-center"><?= $producto['cantidad'] ?></td>
 		      <td class="text-right"><?= SMONEY.' '.$importe ?></td>
@@ -113,22 +158,26 @@ $detalle = $data['pedido']['detalle'];
 		  </tbody>
 		  <tfoot>
 		  		<tr>
-		  			<th colspan="3" class="text-right">Subtotal:</th>
-		  			<td class="text-right"><?= SMONEY.' '.formatMoney($subtotal) ?></td>
+		  			<th colspan="4" class="text-right">Subtotal:</th>
+		  			<td class="text-right"><?= SMONEY.' '.$subtotal ?></td>
 		  		</tr>
 		  		<tr>
-		  			<th colspan="3" class="text-right">Envío:</th>
+		  			<th colspan="4" class="text-right">Envío:</th>
 		  			<td class="text-right"><?= SMONEY.' '.formatMoney($orden['costo_envio']) ?></td>
 		  		</tr>
 		  		<tr>
-		  			<th colspan="3" class="text-right">Total:</th>
+		  			<th colspan="4" class="text-right">Total:</th>
 		  			<td class="text-right"><?= SMONEY.' '.formatMoney($orden['monto']); ?></td>
 		  		</tr>
 		  </tfoot>
 		</table>
 		<div class="text-center">
 			<p>Si tienes preguntas sobre tu pedido, <br>pongase en contacto con nombre, teléfono y Email</p>
-			<h4>¡Gracias por tu compra!</h4>			
+			<h4>¡Gracias por tu compra!</h4>		
+			<h4>
+			    * * *
+Si no hiciste esta compra o simplemente estabas probando nuestro sitio, por favor desconsiderá este e-mail.
+			</h4>
 		</div>
 	</div>									
 </body>

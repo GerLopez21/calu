@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -90,9 +91,9 @@
 			</tr>
 			<tr>
 				<td>
-					<p>Datos del suscriptor.</p>
-					<p>Nombre: <strong><?= $data['nombreSuscriptor']; ?></strong></p>
-					<p>Email: <strong><?= $data['emailSuscriptor']; ?></strong></p>
+					<p>Bienvenido/a <?= $data['nombreSuscriptor']; ?> </p>
+					<p>Te invitamos a realizar tu primera compra con un 10% de descuento con el siguiente código</strong></p>
+					<p>Código: <strong><?= $data['suscripcion']; ?></strong></p>
 					<p class="x_title_gray"><a href="<?= BASE_URL; ?>" target="_blanck"><?= WEB_EMPRESA; ?></a></p>
 				</td>
 			</tr>

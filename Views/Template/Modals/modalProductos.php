@@ -1,4 +1,6 @@
+
 <!-- Modal -->
+
 <div class="modal fade" id="modalFormProductos" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-xl" >
     <div class="modal-content">
@@ -38,46 +40,18 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 85 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock1" name="txtStock1" type="text" required="">
+                            <label class="control-label">Precio descuento<span></span></label>
+                            <input class="form-control" id="txtDescuento" name="txtDescuento" type="text">
                         </div>
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 90 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock2" name="txtStock2" type="text" required="">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 95 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock3" name="txtStock3" type="text" required="">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 100 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock4" name="txtStock4" type="text" required="">
+                       <div class="form-group col-md-6">
+                            <label for="listObl">Talle y color <span class="required">*</span></label>
+                            <select class="form-control selectpicker" id="listObl" name="listObl" required="">
+                              <option value="1">Obligatorio</option>
+                              <option value="2">No obligatorio</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 105 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock5" name="txtStock5" type="text" required="">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 110 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock6" name="txtStock6" type="text" required="">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 115 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock7" name="txtStock7" type="text" required="">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="control-label">Stock talle 120 <span class="required">*</span></label>
-                            <input class="form-control" id="txtStock8" name="txtStock8" type="text" required="">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
+                                    <div class="row">
                         <div class="form-group col-md-6">
                             <label for="listCategoria">Categoría <span class="required">*</span></label>
                             <select class="form-control" data-live-search="true" id="listCategoria" name="listCategoria" required=""></select>

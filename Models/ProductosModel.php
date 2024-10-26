@@ -20,13 +20,38 @@
 		private $intStatus;
 		private $strRuta;
 		private $strImagen;
-		private $intDescuento;
+		private $intPrecioDescuento;
+		private $intObligatorio;
+
 		public function __construct()
 		{
 			parent::__construct();
 		}
-
+		
+		public function selectColores()
+		{
+			$whereAdmin = "";
+			if($_SESSION['idUser'] != 1 ){
+				$whereAdmin = " and idrol != 1 ";
+			}
+			//EXTRAE ROLES
+			$sql = "SELECT * FROM color";
+			$request = $this->select_all($sql);
+			return $request;
+		}
+	    public function selectTalles()
+		{
+			$whereAdmin = "";
+			if($_SESSION['idUser'] != 1 ){
+				$whereAdmin = " and idrol != 1 ";
+			}
+			//EXTRAE ROLES
+			$sql = "SELECT * FROM talles";
+			$request = $this->select_all($sql);
+			return $request;
+		}
 		public function selectProductos(){
+		
 			$sql = "SELECT p.idproducto,
 							p.codigo,
 							p.nombre,
@@ -35,40 +60,52 @@
 							c.nombre as categoria,
 							p.precio,
 							p.stock,
-							p.stocktalle1,
-							p.stocktalle2,
-							p.stocktalle3,
-							p.stocktalle4,
-							p.stocktalle5,
-							p.stocktalle6,
-							p.stocktalle7,
-							p.stocktalle8,
+							p.preciodescuento,
+							p.obl_talle_color,
 							p.status 
 					FROM producto p 
 					INNER JOIN categoria c
 					ON p.categoriaid = c.idcategoria
 					WHERE p.status != 0 ";
 					$request = $this->select_all($sql);
+    				if(count($request) > 0){
+    				    for ($c=0; $c < count($request) ; $c++) { 
+
+    						$intIdProducto = $request[$c]['idproducto'];
+    						$sqlImg = "SELECT img
+    								FROM imagen
+    								WHERE productoid = $intIdProducto limit 1";
+
+    						$arrImg = $this->select_all($sqlImg);
+
+    						if(count($arrImg) > 0){
+    							for ($i=0; $i < count($arrImg); $i++) { 
+    								$arrImg[$i]['url_image'] = media().'/images/uploads/'.$arrImg[$i]['img'];
+    								    						$request[$c]['images'] = media().'/images/uploads/'.$arrImg[$i]['img'];
+
+
+    							}
+    						}
+
+    					}
+					}
+
 			return $request;
 		}	
 
 		public function insertProducto(string $nombre, string $descripcion, int $categoriaid, string $precio, int $stock,
-		int $stock1,int $stock2,int $stock3,int $stock4,int $stock5,int $stock6,int $stock7,int $stock8, string $ruta, int $status){
+        int $preciodescuento, string $ruta, int $status,int $obligatorio){
 			$this->strNombre = $nombre;
 			$this->strDescripcion = $descripcion;
 			$this->intCategoriaId = $categoriaid;
 			$this->strPrecio = $precio;
 			$this->intStock = $stock;
-			$this->intStock1 = $stock1;
-			$this->intStock2 = $stock2;
-			$this->intStock3 = $stock3;
-			$this->intStock4 = $stock4;
-			$this->intStock5 = $stock5;
-			$this->intStock6 = $stock6;
-			$this->intStock7 = $stock7;
-			$this->intStock8 = $stock8;
+			$this->intPrecioDescuento = $preciodescuento;
+	
 			$this->strRuta = $ruta;
 			$this->intStatus = $status;
+			$this->intObligatorio = $obligatorio;
+
 			$return = 0;
 			$sql = "SELECT * FROM producto WHERE codigo = '{$this->intCodigo}'";
 			$request = $this->select_all($sql);
@@ -79,32 +116,20 @@
 														descripcion,
 														precio,
 														stock,
-														stocktalle1,
-														stocktalle2,
-														stocktalle3,
-														stocktalle4,
-														stocktalle5,
-														stocktalle6,
-														stocktalle7,
-														stocktalle8,
+														preciodescuento,
 														ruta,
-														status) 
-								  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+														status,
+														obl_talle_color) 
+								  VALUES(?,?,?,?,?,?,?,?,?)";
 	        	$arrData = array($this->intCategoriaId,
         						$this->strNombre,
         						$this->strDescripcion,
         						$this->strPrecio,
         						$this->intStock,
-								$this->intStock1,
-								$this->intStock2,
-								$this->intStock3,
-								$this->intStock4,
-								$this->intStock5,
-								$this->intStock6,
-								$this->intStock7,
-								$this->intStock8,
+								$this->intPrecioDescuento,
         						$this->strRuta,
         						$this->intStatus,
+        						$this->intObligatorio
 								);
 							
 	        	$request_insert = $this->insert($query_insert,$arrData);
@@ -114,9 +139,53 @@
 			}
 	        return $return;
 		}
+			public function insertMovimiento(string $tipo_movimiento,  $gral_ind, string $procedencia, int $producto, $fecha, string $observacion = null, int $stock){
+		
+				$query_insert  = "INSERT INTO movimientos_stock(tipo_movimiento,
+														gral_ind,
+														procedencia,
+														productoid,
+														fecha,
+														observacion,
+														cantidad) 
+								  VALUES(?,?,?,?,?,?,?)";
 
-		public function updateProducto(int $idproducto, string $nombre, string $descripcion, int $categoriaid, string $precio, int $stock,int $stock1,int $stock2,int $stock3,int $stock4,int $stock5,int $stock6,int $stock7,int $stock8,
-		 string $ruta, int $status){
+	        	$arrData = array($tipo_movimiento,
+        						$gral_ind,
+        						$procedencia,
+        						$producto,
+        						$fecha,
+								$observacion,
+        						$stock
+								);
+							
+	        	$request_insert = $this->insert($query_insert,$arrData);
+
+	        	$return = $request_insert;
+		
+	        return $return;
+		}
+	public function selectStockProducto($idproducto)
+		{
+		    
+		    $this->intIdProducto = $idproducto;
+		
+			$sql = "SELECT s.idstock,s.cantidad,t.nombretalle,c.nombre,s.productoid,s.fotoreferencia,p.stock FROM stock s
+            left join talles t on (t.idstocktalle = s.talleid)
+            left join color c on (c.idcolor = s.colorid)	
+            left join producto p on s.productoid = p.idproducto 
+
+            where s.productoid = $this->intIdProducto and s.cantidad > 0";
+            
+            $request = $this->select_all($sql);
+            $sqlSuma = "select sum(cantidad) as suma from stock where productoid = $this->intIdProducto and cantidad > 0";
+                        $requestSuma = $this->select($sqlSuma);
+
+            $request[0]['sumaindividual'] = $requestSuma['suma'];
+
+			return $request;
+		}
+		public function updateProducto(int $idproducto, string $nombre, string $descripcion, int $categoriaid, string $precio, int $stock,int $preciodescuento,string $ruta, int $status,int $obligatorio){
 			$this->intIdProducto = $idproducto;
 
 			$this->strNombre = $nombre;
@@ -124,16 +193,11 @@
 			$this->intCategoriaId = $categoriaid;
 			$this->strPrecio = $precio;
 			$this->intStock = $stock;
-			$this->intStock1 = $stock1;
-			$this->intStock2 = $stock2;
-			$this->intStock3 = $stock3;
-			$this->intStock4 = $stock4;
-			$this->intStock5 = $stock5;
-			$this->intStock6 = $stock6;
-			$this->intStock7 = $stock7;
-			$this->intStock8 = $stock8;
+			$this->intPrecioDescuento = $preciodescuento;
 			$this->strRuta = $ruta;
 			$this->intStatus = $status;
+			$this->intObligatorio = $obligatorio;
+
 			$return = 0;
 			
 			$sql = "SELECT * FROM producto WHERE codigo = '{$this->intCodigo}' AND idproducto != $this->intIdProducto ";
@@ -148,35 +212,25 @@
 							descripcion=?,
 							precio=?,
 							stock=?,
-							stocktalle1=?,
-							stocktalle2=?,
-							stocktalle3=?,
-							stocktalle4=?,
-							stocktalle5=?,
-							stocktalle6=?,
-							stocktalle7=?,
-							stocktalle8=?,
+							preciodescuento=?,
 							ruta=?,
-							status=? 
+							status=?,
+							obl_talle_color=?
 						WHERE idproducto = $this->intIdProducto ";
 				$arrData = array($this->intCategoriaId,
         						$this->strNombre,
         						$this->strDescripcion,
         						$this->strPrecio,
         						$this->intStock,
-								$this->intStock1,
-								$this->intStock2,
-								$this->intStock3,
-								$this->intStock4,
-								$this->intStock5,
-								$this->intStock6,
-								$this->intStock7,
-								$this->intStock8,
-        						$this->strRuta,
-        						$this->intStatus);
+								$this->intPrecioDescuento,
+								$this->strRuta,
+        						$this->intStatus,
+        						$this->intObligatorio);
 
 	        	$request = $this->update($sql,$arrData);
+	        	
 	        	$return = $request;
+		
 			}else{
 				$return = "exist";
 			}
@@ -191,14 +245,8 @@
 							p.descripcion,
 							p.precio,
 							p.stock,
-							p.stocktalle1,
-							p.stocktalle2,
-							p.stocktalle3,
-							p.stocktalle4,
-							p.stocktalle5,
-							p.stocktalle6,
-							p.stocktalle7,
-							p.stocktalle8,
+							p.preciodescuento,
+							p.obl_talle_color,
 							p.categoriaid,
 							c.nombre as categoria,
 							p.status
@@ -207,6 +255,7 @@
 					ON p.categoriaid = c.idcategoria
 					WHERE idproducto = $this->intIdProducto";
 			$request = $this->select($sql);
+
 			return $request;
 
 		}

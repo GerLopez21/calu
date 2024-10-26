@@ -47,6 +47,7 @@
 
 			$sql = "SELECT p.idpedido, p.nombre_cliente as nombre, p.monto, p.status 
 					FROM pedido p
+					where p.monto > 0 and p.status != 'Cancelado' and p.idpedido != 265 and p.idpedido != 261
 					ORDER BY p.idpedido DESC LIMIT 10 ";
 			$request = $this->select_all($sql);
 			return $request;
@@ -80,7 +81,9 @@
 				$fechaVenta = date_format($date,"Y-m-d");
 				$sql = "SELECT DAY(fecha) AS dia, COUNT(idpedido) AS cantidad, SUM(monto) AS total 
 						FROM pedido 
-						WHERE DATE(fecha) = '$fechaVenta' AND status = 'pendiente' ";
+						WHERE DATE(fecha) = '$fechaVenta' AND status in ('Completo','Confirmado') ";
+								
+//status in ('Completo','Confirmado')
 				$ventaDia = $this->select($sql);
 				$ventaDia['dia'] = $n_dia;
 				$ventaDia['total'] = $ventaDia['total'] == "" ? 0 : $ventaDia['total'];
@@ -89,7 +92,6 @@
 
 				$n_dia++;
 			}
-
 			$meses = Meses();
 			$arrData = array('anio' => $anio, 'mes' => $meses[intval($mes-1)], 'total' => $totalVentasMes,'ventas' => $arrVentaDias );
 

@@ -18,9 +18,6 @@ class ComposerStaticInit9ae5664dc2658cb5772dd9c07bb2eca5
         'D' => 
         array (
             'Doctrine\\Persistence\\' => 21,
-            'Doctrine\\Deprecations\\' => 22,
-            'Doctrine\\Common\\Lexer\\' => 22,
-            'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
         ),
     );
@@ -33,31 +30,15 @@ class ComposerStaticInit9ae5664dc2658cb5772dd9c07bb2eca5
         'MercadoPago\\' => 
         array (
             0 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago',
-            1 => __DIR__ . '/..' . '/mercadopago/dx-php/tests',
-            2 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago/Generic',
-            3 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago/Entities',
-            4 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago/Entities/Shared',
         ),
         'Doctrine\\Persistence\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/persistence/src/Persistence',
         ),
-        'Doctrine\\Deprecations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
-        ),
-        'Doctrine\\Common\\Lexer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ),
-        'Doctrine\\Common\\Annotations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
-        ),
         'Doctrine\\Common\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/common/src',
-            1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
+            0 => __DIR__ . '/..' . '/doctrine/event-manager/src',
+            1 => __DIR__ . '/..' . '/doctrine/common/src',
         ),
     );
 

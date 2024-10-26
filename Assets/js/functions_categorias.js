@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	        if(uploadFoto !=''){
 	            let type = fileimg[0].type;
 	            let name = fileimg[0].name;
-	            if(type != 'image/jpeg' && type != 'image/jpg' && type != 'image/png'){
+	            if(type != 'image/jpeg' && type != 'image/jpg' && type != 'image/png' && type != 'image/webp'){
 	                contactAlert.innerHTML = '<p class="errorArchivo">El archivo no es válido.</p>';
 	                if(document.querySelector('#img')){
 	                    document.querySelector('#img').remove();

@@ -95,12 +95,55 @@
             </a>
         </li>
          <?php } ?>
-
+           <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/descuentos">
+                <i class="app-menu__icon fa fa-percent aria-hidden="true"></i>
+                <span class="app-menu__label">Descuentos</span>
+            </a>
+        </li>
+          <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/promociones">
+                <i class="app-menu__icon fa fa-percent aria-hidden="true"></i>
+                <span class="app-menu__label">Promociones</span>
+            </a>
+        </li>
+          <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/cupones">
+                <i class="app-menu__icon fa fa-percent aria-hidden="true"></i>
+                <span class="app-menu__label">Cupones</span>
+            </a>
+        </li>
+        <?php if(!empty($_SESSION['permisos'][10]['r'])){ ?>
+        <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/tipoenvios">
+                <i class="app-menu__icon fa fa-paint-brush" aria-hidden="true"></i>
+                <span class="app-menu__label">Tipos de envíos</span>
+            </a>
+        </li>
+        <?php } ?>
+        <?php if(!empty($_SESSION['permisos'][10]['r'])){ ?>
+        <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/tipopagos">
+                <i class="app-menu__icon fa fa-paint-brush" aria-hidden="true"></i>
+                <span class="app-menu__label">Tipo de pagos</span>
+            </a>
+        </li>
+        <?php } ?>
+        <?php if(!empty($_SESSION['permisos'][10]['r'])){ ?> <li> <a class="app-menu__item" href="<?= base_url(); ?>/colores"> <i class="app-menu__icon fa fa-paint-brush" aria-hidden="true"></i> <span class="app-menu__label">Colores</span> </a> </li> <?php } ?> <?php if(!empty($_SESSION['permisos'][11]['r'])){ ?> <li> <a class="app-menu__item" href="<?= base_url(); ?>/talles"> <i class="app-menu__icon fa fa-arrows-v" aria-hidden="true"></i> <span class="app-menu__label">Talles</span> </a> </li> <?php } ?>
+          <li>
+            <a class="app-menu__item" href="<?= base_url(); ?>/movimientos">
+                <i class="app-menu__icon fa fa-arrows-h aria-hidden="true"></i>
+                <span class="app-menu__label">Movimientos de stock</span>
+            </a>
+        </li>
         <li>
             <a class="app-menu__item" href="<?= base_url(); ?>/logout">
                 <i class="app-menu__icon fa fa-sign-out" aria-hidden="true"></i>
                 <span class="app-menu__label">Logout</span>
             </a>
         </li>
+             <?php if(!empty($_SESSION['permisos'][11]['r'])){ ?>
+      
+        <?php } ?>
       </ul>
     </aside>

@@ -11,11 +11,11 @@ tablePedidos = $('#tablePedidos').dataTable( {
         "dataSrc":""
     },
     "columns":[
+        {"data":"idpedido"},
         {"data":"nombre_cliente"},
         {"data":"tipopago"},
         {"data":"fecha"},
         {"data":"monto"},
-        {"data":"direccion_envio"},
         {"data":"tipo_envio"},
         {"data":"telefono_cliente"},     
         {"data":"status"},
@@ -50,7 +50,7 @@ tablePedidos = $('#tablePedidos').dataTable( {
             "titleAttr":"Esportar a PDF",
             "className": "btn btn-danger",
             "exportOptions": { 
-                "columns": [ 0, 1, 2, 3, 4, 5] 
+                "columns": [ 0, 1, 2, 3, 4, 5,6,7] 
             }
         },{
             "extend": "csvHtml5",
@@ -92,6 +92,7 @@ function fntTransaccion(idtransaccion){
 }
 
 function fntReembolsar(){
+
     let idtransaccion = document.querySelector("#idtransaccion").value;
     let observacion = document.querySelector("#txtObservacion").value;
     if(idtransaccion == '' || observacion == ''){
@@ -141,6 +142,7 @@ function fntReembolsar(){
 }
 
 function fntEditInfo(element,idpedido){
+
     rowTable = element.parentNode.parentNode.parentNode;
     let request = (window.XMLHttpRequest) ? 
                     new XMLHttpRequest() : 
@@ -169,6 +171,7 @@ function fntEditInfo(element,idpedido){
 }
 
 function fntUpdateInfo(){
+
     let formUpdatePedido = document.querySelector("#formUpdatePedido");
     formUpdatePedido.onsubmit = function(e) {
         e.preventDefault();
@@ -197,11 +200,18 @@ function fntUpdateInfo(){
                      swal("", objData.msg ,"success");
                      $('#modalFormPedido').modal('hide');
                     if(document.querySelector("#txtTransaccion")){
+                        console.log("hola");
                         rowTable.cells[1].textContent = document.querySelector("#txtTransaccion").value;
                         rowTable.cells[4].textContent = document.querySelector("#listTipopago").selectedOptions[0].innerText;
-                        rowTable.cells[5].textContent = document.querySelector("#listEstado").value;
+                        
+                        rowTable.cells[4].textContent = document.querySelector("#listEnvio").value;
+                        rowTable.cells[5].textContent = document.querySelector("#listPago").value;
+                        rowTable.cells[6].textContent = document.querySelector("#listEstado").value;
                     }else{
-                        rowTable.cells[5].textContent = document.querySelector("#listEstado").value;
+                        rowTable.cells[3].textContent = document.querySelector("#listSucursal").value;
+                        rowTable.cells[4].textContent = document.querySelector("#listEnvio").value;
+                        rowTable.cells[5].textContent = document.querySelector("#listPago").value;
+                        rowTable.cells[6].textContent = document.querySelector("#listEstado").value;
                     }
                 }else{
                     swal("Error", objData.msg , "error");

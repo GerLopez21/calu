@@ -6,6 +6,10 @@ $arrImages = $arrProducto['images'];
 $rutacategoria = $arrProducto['categoriaid'].'/'.$arrProducto['ruta_categoria'];
 $urlShared = base_url()."/tienda/producto/".$arrProducto['idproducto']."/".$arrProducto['ruta'];
 $asd = "disabled";
+$arrStock = $data['stock'];
+$arrTalles = $data['tallesycolores'];
+$tallescargados = array();
+$colorescargados = array();
  ?>
 <br><br><br>
 <hr>
@@ -63,14 +67,151 @@ $asd = "disabled";
 						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
 							<?= $arrProducto['nombre']; ?>
 						</h4>
-						<span class="mtext-106 cl2">
-							<?= SMONEY.formatMoney($arrProducto['precio']); ?>
+						<!-- ?php
+						if($arrProducto['preciodescuento'] > 0){ ?>
+						<span class="mtext-106 col-12 cl2 js-insta-variation-precio">
+						<del>	?= SMONEY.formatMoney($arrProducto['precio']); ?></del>
+    					&nbsp;&nbsp;&nbsp;&nbsp;		?= SMONEY.formatMoney($arrProducto['preciodescuento']); ?>
+
 						</span>
-						<!-- <p class="stext-102 cl3 p-t-23"></p> -->
-						<?= $arrProducto['descripcion']; ?>
+					   ?php	}else{ ?> -->
+						<span class="mtext-106 col-12 cl2 js-insta-variation-precio">
+
+							<?= SMONEY.formatMoney($arrProducto['precio']); ?> 
+							
+							
+						</span><br>
+						<span class="mtext-102 col-12 cl1 js-insta-variation-precio">
+
+							<?= SMONEY.formatMoney($arrProducto['precio']*0.75); ?> con efectivo o transferencia 
+							
+							
+						</span><br>
+						<span class="mtext-102 col-12 cl1 js-insta-variation-precio">
+
+							3 cuotas sin interes de <?= SMONEY.formatMoney($arrProducto['precio']/3); ?>
+							
+							
+						</span>
+						<?php if(!empty($arrProducto['descuento'])){ ?>
+								<div class="product-label">
+									
+									<span class="promo stext-103 cl2 size-102"><b><?= $arrProducto['descuento']['titulo'] ?></b> <a href="#" data-toggle="modal" data-target="#modalRequisitosDescuentos" <i class="fa fa-info-circle" style="color:#cfbdb5" aria-hidden="true"> </a></span>
+								</div>
+								<?php } ?>
+									<!-- Modal Descuentos -->
+									<div class="modal fade" id="modalRequisitosDescuentos" tabindex="-1" aria-hidden="true">
+											<div class="modal-dialog modal-lg">
+												<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title"> Info para aplicar descuento </h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+														<div class="page-content">
+														<?php if (isset($arrProducto['descuento']['minimo_compra'])){ ?>
+
+															<?php if($arrProducto['descuento']['minimo_compra'] > 0){ ?>
+															
+															Mínimo de compra: <?= SMONEY.formatMoney($arrProducto['descuento']['minimo_compra']); ?>
+															
+															<?php } ?>
+															<br>
+															<?php if($arrProducto['descuento']['limite_cantidad_productos'] > 1){ ?>
+															
+															Mínimo de productos: <?= $arrProducto['descuento']['limite_cantidad_productos']; ?>
+															
+															<?php } ?>
+															<?php } ?>
+
+														</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+												</div>
+												</div>
+											</div>
+											</div>
+										<!-- cierro modal descuentos -->
+						
+						<h5 class="stext-102 cl3 p-t-23 p-lr-15">
+							<?= $arrProducto['descripcion']; ?>
+						</h5>
+					
 						<!--  -->
-						<div class="p-t-33">
-						<div class="form-group col-xl">
+						 <?php if($arrProducto['stock']>0){
+                                    ?>
+						<div class="p-t-10">
+						      <div class="col-12">
+            <div data-variant="TALLE" class="mtext-106 js-btn-variation-container text-sm-left">
+                <?php if(!empty($arrTalles)){?>
+                          <label for="variation_1" class="form-label mb-1"> TALLE: &nbsp;
+                           <?php } ?>
+                <strong class="js-insta-variation-label"></strong>
+              </label>
+                        
+              <div class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
+                                               
+                <?php
+                 for ($i=0; $i < count($arrTalles); $i++) { 
+                     if(!in_array($arrTalles[$i]['nombretalle'],$tallescargados)){
+                                           
+                                    $nombre= str_replace('/', '-', $arrTalles[$i]['nombretalle']);
+                     ?>
+                                <div class="col-auto">
+                     <a data-option="<?= $arrTalles[$i]['talleid'];?>" style="border-color:#abaaaa;" class="js-btn-variation btn btn-<?php echo $nombre ?> btn-talle mr-2 mb-3 TALLE" id="talle" name="talle" value="<?= $arrTalles[$i]['talleid'];?>">
+                        <?= $arrTalles[$i]['nombretalle'];?>
+                    </a>
+                    <?php array_push($tallescargados,$arrTalles[$i]['nombretalle']);
+
+
+                            ;?>
+                </div>
+                <?php
+                }}
+
+                ?>
+                     
+                              </div>
+            </div>
+        </div>
+        <div id="containerColor" class="col-12 js-talle js-colores-80x60">
+            <div data-variant="TALLE" class="mtext-106 js-btn-variation-container text-sm-left">
+                          <label for="variation_1" class="form-label mb-1"> COLOR: &nbsp;
+                <strong class="js-insta-variation-label-color"></strong>
+              </label>
+              <div  id="coloresInit" class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
+			  <?php
+                 for ($i=0; $i < count($arrTalles); $i++) { 
+
+                     if(!in_array($arrTalles[$i]['nombre'],$colorescargados)){
+                                    $nombre= str_replace('/', '-', $arrTalles[$i]['nombre']);
+
+                     ?>
+                                <div class="col-auto">
+                     <a data-option="<?= $arrTalles[$i]['nombre'];?>" style="border-color:#abaaaa;" class="js-btn-variation btn btn-<?php echo $nombre ?> btn-talle mr-2 mb-3 COLOR" id="color" name="color" value="<?= $arrTalles[$i]['nombre'];?>">
+                        <?= $arrTalles[$i]['nombre'];?>
+                    </a>
+                    <?php array_push($colorescargados,$arrTalles[$i]['nombre']);
+
+
+                            ;?>
+                </div>
+                <?php
+                }}
+
+                ?>
+             
+                              
+                            </div>
+							<div id="containerFilas" class="disp"></div>
+                                <div id="containerFilas2" class="disp"></div>
+                                <div id="containerFilas3" class="disp"></div>
+            </div>
+        </div>
+   						<div class="form-group col-xl">
 
 						<div class="wrap-num-product flex-w m-r-20 m-tb-10">
 							
@@ -84,73 +225,19 @@ $asd = "disabled";
 											<i class="fs-16 zmdi zmdi-plus"></i>
 										</div>
 									</div>
-                            <div class="form-group col-bg">
-                                <label for="listTalles">Seleccione los talles</label>
-								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-								<select id="listTalles" class="js-select2" name="listTalles">
-									
-											<?php if($arrProducto['stocktalle1'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle1']?>" disabled><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
-											<?php }else{?>
-												<option value="85"><?="Talle 85               Quedan            "."                  ". $arrProducto['stocktalle1']?></option>
-											<?php } ?>
-											<?php if($arrProducto['stocktalle2'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle2']?>" disabled><?="Talle 90              Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
-											<?php }else{?>
-												<option value="90"><?="Talle 90               Quedan            "."                  ". $arrProducto['stocktalle2']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle3'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle3']?>" disabled><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
-											<?php }else{?>
-												<option value="95"><?="Talle 95               Quedan            "."                  ". $arrProducto['stocktalle3']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle4'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle4']?>" disabled><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
-											<?php }else{?>
-												<option value="100"><?="Talle 100               Quedan            "."                  ". $arrProducto['stocktalle4']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle5'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle5']?>" disabled><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
-											<?php }else{?>
-												<option value="105"><?="Talle 105               Quedan            "."                  ". $arrProducto['stocktalle5']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle6'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle6']?>" disabled><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
-											<?php }else{?>
-												<option value="110"><?="Talle 110               Quedan            "."                  ". $arrProducto['stocktalle6']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle7'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle7']?>" disabled><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
-											<?php }else{?>
-												<option value="115"><?="Talle 115               Quedan            "."                  ". $arrProducto['stocktalle7']?></option>
-
-											<?php } ?>
-											<?php if($arrProducto['stocktalle8'] <= 0){ ?>
-										 	<option value="<?= $arrProducto['stocktalle8']?>" disabled><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
-											<?php }else{?>
-												<option value="120"><?="Talle 120               Quedan            "."                  ". $arrProducto['stocktalle8']?></option>
-
-											<?php } ?>
-										 	
-
-                                </select>
-								<div class="dropDownSelect2"></div>
-							</div>	
-                            </div>
+                            
 							  
 							</div>
-                
+                               
 									<button id="<?= openssl_encrypt($arrProducto['idproducto'],METHODENCRIPT,KEY); ?>" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
 										Agregar al carrito
 									</button>
-									
+															<?php }else{ ?>
+
 									</div>			
-							
+									<span class="mtext-106 cl2">
+    						         SIN STOCK   						</span>
+								<?php } ?>
 							
 						</div>
 						<!--  -->
@@ -217,9 +304,66 @@ $asd = "disabled";
 									<a href="<?= base_url().'/tienda/producto/'.$arrProductos[$p]['idproducto'].'/'.$ruta; ?>" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 										<?= $arrProductos[$p]['nombre'] ?>
 									</a>
-									<span class="stext-105 cl3">
-										<?= SMONEY.formatMoney($arrProductos[$p]['precio']); ?>
-									</span>
+									<span class="mtext-106 col-12 cl2 js-insta-variation-precio p-l-02">
+
+							<?= SMONEY.formatMoney($arrProducto['precio']); ?> 
+							
+							
+						</span><br>
+						<span class="stext-102 col-12 cl1 js-insta-variation-precio p-l-0">
+
+							<?= SMONEY.formatMoney($arrProductos[$p]['precio']*0.75); ?> con efectivo o transferencia 
+							
+							
+						</span>
+						<span class="stext-102 col-12 cl1 js-insta-variation-precio p-l-0">
+
+							3 cuotas sin interes de <?= SMONEY.formatMoney($arrProductos[$p]['precio']/3); ?>
+							
+							
+						</span>
+						<?php if(!empty($arrProducto['descuento'])){ ?>
+								<div class="product-label">
+									
+									<span class="promo stext-103 cl2 size-102"><b><?= $arrProducto['descuento']['titulo'] ?></b> <a href="#" data-toggle="modal" data-target="#modalRequisitosDescuentos" <i class="fa fa-info-circle" style="color:#cfbdb5" aria-hidden="true"> </a></span>
+								</div>
+								<?php } ?>
+									<!-- Modal Descuentos -->
+									<div class="modal fade" id="modalRequisitosDescuentos" tabindex="-1" aria-hidden="true">
+											<div class="modal-dialog modal-lg">
+												<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title"> Info para aplicar descuento </h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+														<div class="page-content">
+														<?php if (isset($arrProducto['descuento']['minimo_compra'])){ ?>
+
+															<?php if($arrProducto['descuento']['minimo_compra'] > 0){ ?>
+															
+															Mínimo de compra: <?= SMONEY.formatMoney($arrProducto['descuento']['minimo_compra']); ?>
+															
+															<?php } ?>
+															<br>
+															<?php if($arrProducto['descuento']['limite_cantidad_productos'] > 1){ ?>
+															
+															Mínimo de productos: <?= $arrProducto['descuento']['limite_cantidad_productos']; ?>
+															
+															<?php } ?>
+															<?php } ?>
+
+														</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+												</div>
+												</div>
+											</div>
+											</div>
+							
 								</div>
 								<div class="block2-txt-child2 flex-r p-t-3">
 									<a href="#"

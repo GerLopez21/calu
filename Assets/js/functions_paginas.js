@@ -82,7 +82,7 @@ if(document.querySelector("#formPaginas")){
         let strTitulo = document.querySelector('#txtTitulo').value;
         let strContenido = document.querySelector('#txtContenido').value;
         let intStatus = document.querySelector('#listStatus').value;
-        if(strTitulo == '' || strContenido == '' || intStatus == '' )
+        if(strTitulo == '' || intStatus == '' )
         {
             swal("Atención", "Todos los campos son obligatorios." , "error");
             return false;

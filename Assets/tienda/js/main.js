@@ -189,6 +189,24 @@
         }    
     });
 
+    $('.js-show-filter2').on('click',function(){
+        $(this).toggleClass('show-filter2');
+        $('.panel-filter2').slideToggle(400);
+
+        if($('.js-show-search2').hasClass('show-search2')) {
+            $('.js-show-search2').removeClass('show-search2');
+            $('.panel-search2').slideUp(400);
+        }    
+    });
+    $('.js-show-search2').on('click',function(){
+        $(this).toggleClass('show-search2');
+        $('.panel-search2').slideToggle(400);
+
+        if($('.js-show-filter2').hasClass('show-filter2')) {
+            $('.js-show-filter2').removeClass('show-filter2');
+            $('.panel-filter2').slideUp(400);
+        }    
+    });
 
 
 

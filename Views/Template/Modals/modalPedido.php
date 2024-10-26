@@ -17,48 +17,112 @@
                           <td width="210">No. Pedido</td>
                           <td><?= $data['orden']['idpedido'] ?></td>
                       </tr>
-                      <tr>
-                          <td>Cliente:</td>
-                          <td><?= $data['cliente']['nombres'].' '.$data['cliente']['apellidos'] ?></td>
-                      </tr>
+                    
                       <tr>
                           <td>Importe total:</td>
                           <td><?= SMONEY.' '.$data['orden']['monto'] ?></td>
                       </tr>
                       <tr>
-                          <td>Transacción:</td>
+                          <td>Direccion:</td>
                           <td>
-                            <?php 
-                                if($data['orden']['tipopagoid'] == 1){
-                                    echo $data['orden']['idtransaccionpaypal'];
-                                }else{
-                            ?>
-                            <input type="text" name="txtTransaccion" id="txtTransaccion" class="form-control" value="<?= $data['orden']['referenciacobro'] ?>" required="">
-                                <?php } ?>
+                            <input type="text" name="txtDireccion" id="txtDireccion" class="form-control" value="<?= $data['orden']['direccion_envio'] ?>" >
+                        
                           </td>
                       </tr>
                       <tr>
-                          <td>Tipo pago:</td>
+                          <td>Ciudad:</td>
+                          <td><?= $data['orden']['ciudad_cliente'] ?></td>
+
+                      </tr>
+                      <tr>
+                          <td> Telefono:</td>
                           <td>
-                            <?php 
-                                if($data['orden']['tipopagoid'] == 1){
-                                    echo $data['orden']['tipopago'];
-                                }else{
-                            ?>
-                              <select name="listTipopago" id="listTipopago" class="form-control selectpicker" data-live-search="true" required="">
-                                  <?php 
-                                    for ($i=0; $i < count($data['tipospago']) ; $i++) {
-                                        $selected = "";
-                                        if( $data['tipospago'][$i]['idtipopago'] == $data['orden']['tipopagoid']){
-                                            $selected = " selected ";
-                                        }
-                                   ?>
-                                    <option value="<?= $data['tipospago'][$i]['idtipopago'] ?>" <?= $selected ?> ><?= $data['tipospago'][$i]['tipopago'] ?></option>
-                                <?php } ?>
-                              </select>
-                          <?php } ?>
+                            <input type="tel" name="txtTelefono" id="txtTelefono" class="form-control" value="<?= $data['orden']['telefono_cliente'] ?>" required="">
+                        
                           </td>
                       </tr>
+                        <tr>
+                          <td> Email:</td>
+                          <td>
+                            <input type="tel" name="txtEmail" id="txtEmail" class="form-control" value="<?= $data['orden']['email_cliente'] ?>" required="">
+                        
+                          </td>
+                      </tr>
+                      <tr>
+                          <td>Documento:</td>
+                          <td><?= $data['orden']['dni_cliente'] ?></td>
+
+                      </tr>
+                       <tr>
+                          <td>Código seguimiento:</td>
+                           <td>
+                            <input type="text" name="txtSeguimiento" id="txtSeguimiento" class="form-control" value="<?= $data['orden']['cod_seguimiento'] ?>">
+                        
+                          </td>
+
+                      </tr>
+                       <tr>
+                          <td>Fecha retiro:</td>
+                                <td>
+                            <input type="date" name="txtRetiro" id="txtRetiro" class="form-control" value="<?= $data['orden']['fecha_retiro'] ?>">
+                        
+                          </td>
+
+                      </tr>
+                    
+                      <tr>
+                          <td>Sucursal:</td>
+                          <td>
+                              <select name="listSucursal" id="listSucursal" class="form-control selectpicker" data-live-search="true" required="">
+                                  <?php 
+                                    for ($i=0; $i < count(SUCURSALES) ; $i++) {
+                                        $selected = "";
+                                        if( SUCURSALES[$i] == $data['orden']['sucursal']){
+                                            $selected = " selected ";
+                                        }
+
+                                   ?>
+                                   <option value="<?= SUCURSALES[$i] ?>" <?= $selected ?> ><?= SUCURSALES[$i] ?></option>
+                               <?php } ?>
+                              </select>
+                          </td>
+                      </tr>
+                
+                      <tr>
+                          <td>Envio:</td>
+                          <td>
+                              <select name="listEnvio" id="listEnvio" class="form-control selectpicker" data-live-search="true" required="">
+                                  <?php 
+                                    for ($i=0; $i < count(TIPO_ENVIO) ; $i++) {
+                                        $selected = "";
+                                        if( TIPO_ENVIO[$i] == $data['orden']['tipo_envio']){
+                                            $selected = " selected ";
+                                        }
+
+                                   ?>
+                                   <option value="<?= TIPO_ENVIO[$i] ?>" <?= $selected ?> ><?= TIPO_ENVIO[$i] ?></option>
+                               <?php } ?>
+                              </select>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td>Tipo de pago:</td>
+                          <td>
+                              <select name="listPago" id="listPago" class="form-control selectpicker" data-live-search="true" required="">
+                                  <?php 
+                                    for ($i=0; $i < count(TIPO_PAGO) ; $i++) {
+                                        $selected = "";
+                                        if( TIPO_PAGO[$i] == $data['orden']['tipopago']){
+                                            $selected = " selected ";
+                                        }
+
+                                   ?>
+                                   <option value="<?= TIPO_PAGO[$i] ?>" <?= $selected ?> ><?= TIPO_PAGO[$i] ?></option>
+                               <?php } ?>
+                              </select>
+                          </td>
+                      </tr>
+                     
                       <tr>
                           <td>Estado:</td>
                           <td>
@@ -75,6 +139,15 @@
                               </select>
                           </td>
                       </tr>
+                      <?php 
+                        for ($j=0; $j < count($data['detalle']);$j++){?>
+                      <tr>
+                        
+                          <td>Producto</td>
+                          <td><?=$data['detalle'][$j]['cantidad']." ".$data['detalle'][$j]['producto'] ?></td>
+                         
+                        </tr>
+                        <?php }?>
                   </tbody>
               </table>
               <div class="tile-footer">

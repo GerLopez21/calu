@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
   <head>
     <meta charset="utf-8">
@@ -36,4 +37,5 @@
         </li>
       </ul>
     </header>
+    
     <?php require_once("nav_admin.php"); ?> 
