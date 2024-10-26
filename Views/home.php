@@ -289,6 +289,9 @@
 										Agotado
 										</h5> <?php
 									} ?>
+									<?php if ($arrProductos[$p]['stock'] <= 0){
+										?>Agotado <?php
+									} ?>
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">

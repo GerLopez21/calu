@@ -1,6 +1,5 @@
 <?php 
 
-
 require_once("Models/TTipoPago.php"); 
 class Pedidos extends Controllers{
 	use TTipoPago;

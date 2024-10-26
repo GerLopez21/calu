@@ -176,7 +176,6 @@
 			$request = $this->select($sql);
 			
 			$color = $request['nombre'];
-
 			$sql = "UPDATE stock 
 						SET cantidad=?,talleid=?,colorid=?,fotoreferencia=?
 						

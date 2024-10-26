@@ -248,7 +248,6 @@ trait TProducto{
 						FROM producto p WHERE p.status = 1 " .$categoria .$order;
 
 					$request = $this->con->select_all($sql);
-
 					if(count($request) > 0){
 						for ($c=0; $c < count($request) ; $c++) { 
 							$intIdProducto = $request[$c]['idproducto'];
