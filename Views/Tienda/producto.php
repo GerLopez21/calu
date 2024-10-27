@@ -188,10 +188,9 @@ $colorescargados = array();
 
                      if(!in_array($arrTalles[$i]['nombre'],$colorescargados)){
                                     $nombre= str_replace('/', '-', $arrTalles[$i]['nombre']);
-
                      ?>
                                 <div class="col-auto">
-                     <a data-option="<?= $arrTalles[$i]['nombre'];?>" style="border-color:#abaaaa;" class="js-btn-variation btn btn-<?php echo $nombre ?> btn-talle mr-2 mb-3 COLOR" id="color" name="color" value="<?= $arrTalles[$i]['nombre'];?>">
+                     <a data-option="<?= $arrTalles[$i]['colorid'];?>" style="border-color:#abaaaa;" class="js-btn-variation btn btn-<?php echo $nombre ?> btn-talle mr-2 mb-3 COLOR" id="color" name="color" value="<?= $arrTalles[$i]['nombre'];?>">
                         <?= $arrTalles[$i]['nombre'];?>
                     </a>
                     <?php array_push($colorescargados,$arrTalles[$i]['nombre']);

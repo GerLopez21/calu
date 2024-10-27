@@ -41,7 +41,7 @@
 			$this->strDescripcion = $descripcion;
 
 
-			$sql = "SELECT * FROM tipoenvio WHERE tipoenvio = '{$this->strNombre}' ";
+			$sql = "SELECT * FROM tipoenvio WHERE nombre = '{$this->strNombre}' ";
 
 			$request = $this->select_all($sql);
 

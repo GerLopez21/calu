@@ -84,7 +84,7 @@ $('.js-addcart-detail').each(function(){
 		}
 		talle = talleseleccionado;
 		color = colorseleccionado;
-
+		alert(color)
 
 
 		if(isNaN(cant) || cant < 1){
@@ -520,7 +520,7 @@ $(document).on('click','.js-btn-variation', function(){ //esta función se ejecu
 						 			<div  id="coloresInit2" class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
 
 										 <div class="col-auto disp" style="padding:0;">
-										 <a data-option="${item.nombre}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
+										 <a data-option="${item.colorid}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
 										 ${item.nombre}
 									 </a>
 									 </div>
@@ -534,7 +534,7 @@ $(document).on('click','.js-btn-variation', function(){ //esta función se ejecu
 						 <div  id="coloresInit2" class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
 
 										 <div class="col-auto disp" style="padding:0;">
-										 <a data-option="${item.nombre}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
+										 <a data-option="${item.colorid}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
 										 ${item.nombre}
 									 </a>
 									 </div>									 </div>
@@ -545,7 +545,7 @@ $(document).on('click','.js-btn-variation', function(){ //esta función se ejecu
 						 <div  id="coloresInit2" class="mtext-106 row ml-0 justify-content-sm-start no-gutters">
 
 										 <div class="col-auto disp" style="padding:0;">
-										 <a data-option="${item.nombre}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
+										 <a data-option="${item.colorid}"  data-slide-index="${item.fotoreferencia}" class="js-btn-variation-color cambiarSlide btn-${nueva} btn btn-talle js-color-${nueva} mr-2 mb-3 TALLE id="${nueva}" name="transferencia" value="${nueva}">
 										 ${item.nombre}
 									 </a>
 									 </div>
@@ -681,9 +681,11 @@ $(document).on('click','.js-btn-variation-color', function(){ //esta función se
        $(".btn").css( "background-color", "white" );
 		let seleccionadocolor = $(this).data('option'); // Obtiene el valor del data-option del botón clickeado
 
-
+		alert(seleccionadocolor)
         colorseleccionado = seleccionadocolor;
-        let colorsinespa = colorseleccionado.replace(/ /g, "-")
+		let colorSeleccionadoHtml = $(this).text(); // Obtiene el texto dentro del botón clickeado, para ponerlo arriba
+
+        let colorsinespa = colorSeleccionadoHtml.replace(/ /g, "-")
 
 		let selectedcolor  = $(this).parent().find('.js-btn-variation-color').html();
         let selectedbtncolor = ".btn-"+colorsinespa.trim();
@@ -698,7 +700,7 @@ $(document).on('click','.js-btn-variation-color', function(){ //esta función se
         var matches = urlCompleta.match(/\/producto\/(\d+)\//);
         var numeroProducto = matches ? matches[1] : null;
 
-        $('.js-insta-variation-label-color').html(colorseleccionado); 
+        $('.js-insta-variation-label-color').html(colorSeleccionadoHtml); 
 	       $(selectedbtncolor).css( "border-color", "#ebabab" );
 
 
@@ -914,7 +916,47 @@ if(document.querySelector("#continuar")){
 	});
 }
 $('.opcionEnvio').on('click', function(e){
+	alert("o")
+	alert(this.value)
+	alert(this.checked)
+	if(this.checked){
+		let envioSelected = this.value
+		let ajaxUrl = base_url+'/Tienda/getEnvioSelected/'+envioSelected;
+        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        let newElement = "";
 
+		request.open("GET",ajaxUrl,true);
+        request.send();
+        request.onreadystatechange = function(){
+			if(request.readyState != 4) return;
+            if(request.readyState == 4 && request.status == 200){
+				let responseText = request.responseText;
+			var data = JSON.parse(responseText);
+			$('.envio-option').hide();
+
+				data.forEach(function(item) {
+
+				newElement += `
+			
+						<div class="envio-option">
+									<label  class="span-check-local" >
+										
+										<span style="font-family:Poppins-Medium; font-size:14px; text-align: center;"><b><input style="display:inline;" type="checkbox" checked class="opcionEnvio"  id="retirolocal" name="retirolocal" value=${item.idtipoenvio} >
+										 ${item.nombre}</b></span>
+										<br>
+										<span style="font-family:Poppins-Medium;display:flex;cursor:pointer;">       ${item.descripcion} </span>
+									</label>
+						</div>
+					   `;
+            	});
+			}
+			document.querySelector("#containerFilasEnvio").innerHTML = newElement; 
+			document.querySelector('#divMetodoPago').classList.remove("notblock");
+
+        }
+	}else{
+
+	}
 			if(this.value == "Retiro centro"){
 				document.querySelector('#divMetodoPago').classList.remove("notblock");
         			$("#enviocorreo").prop( "checked", false );

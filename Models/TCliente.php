@@ -17,7 +17,9 @@ trait TCliente{
     private $intTalle;
     private $strColor;
     private $intProducto;
-
+    private $intIdTalle;
+    private $intIdColor;
+	private $intIdEnvio;
 	public function insertCliente(string $nombre, string $apellido, int $telefono, string $email, string $password, int $tipoid){
 		$this->con = new Mysql();
 		$this->strNombre = $nombre;
@@ -71,6 +73,30 @@ trait TCliente{
             
 			$request = $this->con->select($sql);
             $request = $request['idcolor'];
+			return $request;
+		}
+		public function getNombreTalle(int $idTalle)
+		{
+
+		    		$this->con = new Mysql();
+
+			//BUSCAR ROLE
+			$this->intIdTalle = $idTalle;
+			$sql = "SELECT nombretalle FROM talles WHERE idstocktalle = $this->intIdTalle";
+			$request = $this->con->select($sql);
+            $request = $request['nombretalle'];
+			return $request;
+		}
+		 public function getNombreColor(int $idColor)
+		{
+		    		$this->con = new Mysql();
+
+			//BUSCAR ROLE
+			$this->intIdColor = $idColor;
+			$sql = "SELECT nombre FROM color WHERE idcolor = $this->intIdColor";
+            
+			$request = $this->con->select($sql);
+            $request = $request['nombre'];
 			return $request;
 		}
 	public function insertPedido(string $idtransaccionpaypal = NULL, string $datospaypal = NULL, int $personaid, float $costo_envio, string $monto, int $tipopagoid, string $direccionenvio, string $status,date $fecha_compra){
@@ -483,7 +509,617 @@ trait TCliente{
 		return $request;
 
 	}
-	
+	public function getTipoenvios()
+		{
+
+		$this->con = new Mysql();
+			
+			//EXTRAE ROLES
+			$sql = "SELECT * FROM tipoenvio where status !=0 and fecha_baja is null ";
+		    $request = $this->con->select_all($sql);
+			return $request;
+		}
+		public function getTiposPagos()
+		{
+
+		$this->con = new Mysql();
+			
+			//EXTRAE ROLES
+			$sql = "SELECT * FROM tipopago where status !=0 ";
+		    $request = $this->con->select_all($sql);
+			return $request;
+		}
+		public function getDescuentos(){
+			$error= null;
+			$subtotal = 0;
+            $total = 0;
+			$_SESSION['descuentosCarrito'] = [];
+			if(!isset($_SESSION['totalDescuentos'])){
+				$_SESSION['totalDescuentos'] = 0;
+			}
+			foreach ($_SESSION['arrCarrito'] as $producto) {
+				
+					$subtotal += $producto['precio'] * $producto['cantidad'];
+					
+				//$arrProductos=array();
+				//array_push($arrProductos,$producto['producto']);
+			}
+			$total = $subtotal;
+			for($i = 0; $i<count($_SESSION['arrCarrito']);$i++){
+
+				if(isset($_SESSION['arrCarrito'][$i]['descuento'])){   //Veo si ese producto tiene descuento
+					if($_SESSION['arrCarrito'][$i]['descuento']['minimo_compra'] > 0){
+						if($total < $_SESSION['arrCarrito'][$i]['descuento']['minimo_compra']){
+							// $error = "Minimo de compra no superado para descuento";
+						}
+					  }
+					  if($_SESSION['arrCarrito'][$i]['descuento']['limite_cantidad_usos'] <= 0 ){
+  
+							// $error = "El descuento ya no se encuentra vigente";
+						}
+						
+						if($_SESSION['arrCarrito'][$i]['descuento']['limite_fecha_hasta'] < date('Y-m-d H:m:s') ){
+						//  $error = "El descuento ya no se encuentra vigente";
+						}
+
+					  if($error ==null && $_SESSION['arrCarrito'][$i]['descuento']['estado'] == 2){
+
+						  if($_SESSION['arrCarrito'][$i]['descuento']['tipo'] == 1){
+							 //   $_SESSION['arrCarrito'][$i]['precioDescuento'] = $_SESSION['arrCarrito'][$i]['precio'] - $_SESSION['arrCarrito'][$i]['descuento']['monto_descuento'];
+							//    //$_SESSION['descuentosCarrito']['monto'] = $_SESSION['descuentosCarrito']['monto'] + $_SESSION['arrCarrito'][$i]['descuento']['monto_descuento'];
+							// //   dep($error);die;
+
+							$_SESSION['descuentosCarrito'][] = [
+								'titulo' => "Descuento monto fijo",
+								'monto' => $_SESSION['arrCarrito'][$i]['descuento']['monto_descuento'],
+								'descuento' => $_SESSION['arrCarrito'][$i]['descuento']['iddescuento'],
+								'productoDescuento' => $_SESSION['arrCarrito'][$i]['idproducto']
+							];
+			                $_SESSION['totalDescuentos'] += $_SESSION['arrCarrito'][$i]['descuento']['monto_descuento'];
+
+							$_SESSION['arrCarrito'][$i]['descuento']['estado'] = 2;
+							}elseif($_SESSION['arrCarrito'][$i]['descuento']['tipo'] == 2){
+						//	  $_SESSION['arrCarrito'][$i]['precio'] = $_SESSION['arrCarrito'][$i]['precio'] - ($_SESSION['arrCarrito'][$i]['precio']*$_SESSION['arrCarrito'][$i]['descuento']['porcentaje_descuento']/100);
+						//	  $_SESSION['arrCarrito'][$i]['precio'] = $_SESSION['arrCarrito'][$i]['precio'] - ($_SESSION['arrCarrito'][$i]['precio']*$_SESSION['arrCarrito'][$i]['descuento']['porcentaje_descuento']/100);
+						//	  $_SESSION['descuentosCarrito']['monto'] = $_SESSION['descuentosCarrito']['monto'] + ($_SESSION['arrCarrito'][$i]['precio']*$_SESSION['arrCarrito'][$i]['descuento']['porcentaje_descuento']/100);
+
+							  
+							  $_SESSION['descuentosCarrito'][] = [
+								'titulo' => "Descuento porcentaje",
+								'monto' => ($_SESSION['arrCarrito'][$i]['precio']*$_SESSION['arrCarrito'][$i]['descuento']['porcentaje_descuento']/100),
+								'descuento' => $_SESSION['arrCarrito'][$i]['descuento']['iddescuento'],
+								'productoDescuento' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['arrCarrito'][$i]['descuento']['estado'] = 2;
+			                $_SESSION['totalDescuentos'] += ($_SESSION['arrCarrito'][$i]['precio']*$_SESSION['arrCarrito'][$i]['descuento']['porcentaje_descuento']/100);
+
+						  }elseif($_SESSION['arrCarrito'][$i]['descuento']['tipo'] == 3){
+							$_SESSION['arrCarrito'][$i]['descuento']['estado'] = 2;
+
+							$_SESSION['descuentosCarrito'][] = [
+								'titulo' => "Envio gratis",
+								'monto' => "Envio gratis",
+								'descuento' => $_SESSION['arrCarrito'][$i]['descuento']['iddescuento'],
+								'productoDescuento' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+						  }
+						}
+				}
+			}
+			return;
+
+			// foreach($_SESSION['arrCarrito'] as $producto){ //Recorro cada producto del carrito
+            //    if(isset($producto['descuento'])){   //Veo si ese producto tiene descuento
+
+            //        if($producto['descuento']['minimo_compra'] > 0){
+			// 		  if($total < $producto['descuento']['minimo_compra']){
+			// 			   $error = "Minimo de compra no superado para descuento";
+			// 		  }
+			// 		}
+			// 		if($producto['descuento']['limite_cantidad_usos'] <= 0 ){
+
+			// 			   $error = "El descuento ya no se encuentra vigente";
+			// 		  }
+					  
+			// 		  if($producto['descuento']['limite_fecha_hasta'] < date('Y-m-d H:m:s') ){
+			// 			$error = "El descuento ya no se encuentra vigente";
+			// 	      }
+
+			// 		if($error ==null){
+			// 			if($producto['descuento']['tipo'] == 1){
+			// 				 $producto['precio'] = $producto['precio'] - $producto['descuento']['monto_descuento'];
+			// 				 $_SESSION['descuentosCarrito']['monto'] = $_SESSION['descuentosCarrito']['monto'] + $producto['descuento']['monto_descuento'];
+			// 			}elseif($producto['descuento']['tipo'] == 2){
+			// 				$producto['precio'] = $producto['precio'] - $producto['descuento']['porcentaje_descuento'];
+			// 				$producto['precio'] = $producto['precio'] - ($producto['precio']*$producto['descuento']['porcentaje_descuento']/100);
+			// 				$_SESSION['descuentosCarrito']['monto'] = $_SESSION['descuentosCarrito']['monto'] + ($producto['precio']*$producto['descuento']['porcentaje_descuento']/100);
+
+			// 			}elseif($producto['descuento']['tipo'] == 3){
+			// 				$_SESSION['descuentosCarrito']['envio'] = true;
+			// 			}
+			// 		  }
+					  
+
+			//    }
+
+			// }
+
+		}
+		public function getPromociones(){
+			$error= null;
+			$subtotal = 0;
+            $total = 0;
+			$_SESSION['promocionesCarrito'] = [];
+			$_SESSION['totalDescPromos'] = 0;
+		
+			
+            foreach ($_SESSION['arrCarrito'] as $producto) {
+                $idpromocion = $producto['promocion']['idpromocion'];
+				$cantidad = $producto['cantidad']; // Obtener la cantidad del producto
+
+                // Inicializa la promoción si no existe
+                if (!isset($promociones[$idpromocion])) {
+                    $promociones[$idpromocion] = [
+                        'productos' => [],
+                        'promocion' => $producto['promocion']
+                    ];
+                }
+            	$subtotal += $producto['precio'] * $producto['cantidad'];
+            
+                // Agrega el producto al grupo de la promoción correspondiente
+				for ($i = 0; $i < $cantidad; $i++) {
+					$promociones[$idpromocion]['productos'][] = $producto;
+				}            }
+            $total = $subtotal;
+            
+            // Ahora $promociones contiene los productos agrupados por promoción
+            foreach ($promociones as $idpromocion => $data) {
+                $productos = $data['productos'];
+                $promocion = $data['promocion'];
+            
+                // Aquí puedes aplicar las reglas específicas de cada promoción
+                if ($promocion['tipo'] == 1) { // 2x1
+            		$cantidadProductos = count($productos);
+            
+                    $productosConDescuento = floor($cantidadProductos / 2); // Cada 2 productos, uno es gratis
+					for ($i = 0; $i < $productosConDescuento; $i++) { 
+						$producto1 = $productos[$i * 2];
+						$producto2 = $productos[$i * 2 + 1];
+
+						if ($promocion['aplicabilidad'] == 1) {
+							// Se descuenta la mitad de la suma del precio de los dos productos
+							$descuento = ($producto1['precio'] + $producto2['precio']) / 2;
+							$_SESSION['promocionesCarrito'][] = [
+								'titulo' => "Descuento 2x1 ".$i,
+								'monto' => $descuento,
+								'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+							];
+							$_SESSION['totalDescPromos'] += $descuento;			
+						} elseif ($promocion['aplicabilidad'] == 2) {
+							// Se descuenta el precio del producto de menor valor
+							if ($producto1['precio'] < $producto2['precio']) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 2x1 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 2x1 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+							}
+						} elseif ($promocion['aplicabilidad'] == 3) {
+							if ($producto1['precio'] > $producto2['precio']) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 2x1 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 2x1 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+							}
+						}
+					
+						// Actualizar los productos en el array original
+						// $productos[$i * 2] = $producto1;
+						// $productos[$i * 2 + 1] = $producto2;
+					}
+                } elseif ($promocion['tipo'] == 2) { // 3x2
+					$cantidadProductos = count($productos);
+
+					$productosConDescuento = floor($cantidadProductos / 3); // Cada 3 productos, uno es gratis
+					
+					for ($i = 0; $i < $productosConDescuento; $i++) { 
+						$producto1 = $productos[$i * 3];
+						$producto2 = $productos[$i * 3 + 1];
+						$producto3 = $productos[$i * 3 + 2];
+					
+						if ($promocion['aplicabilidad'] == 1) {
+							// Se descuenta la mitad de la suma de los tres productos
+							$descuento = ($producto1['precio'] + $producto2['precio'] + $producto3['precio']) / 2;
+						
+							$_SESSION['promocionesCarrito'][] = [
+								'titulo' => "Descuento 3x2 ".$i,
+								'monto' => $descuento,
+								'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+							];
+							
+							$_SESSION['totalDescPromos'] += $descuento;
+
+						} elseif ($promocion['aplicabilidad'] == 2) {
+							// Se descuenta el precio del producto de menor valor
+							$minPrecio = min($producto1['precio'], $producto2['precio'], $producto3['precio']);
+							if ($producto1['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+									
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto3['precio'];
+
+							}
+						} elseif ($promocion['aplicabilidad'] == 3) {
+							// Se descuenta el precio del producto de mayor valor
+							$maxPrecio = max($producto1['precio'], $producto2['precio'], $producto3['precio']);
+							if ($producto1['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 3x2 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto3['precio'];
+
+							}
+						}
+					
+						// // Actualizar los productos en el array original
+						// $productos[$i * 3] = $producto1;
+						// $productos[$i * 3 + 1] = $producto2;
+						// $productos[$i * 3 + 2] = $producto3;
+					}
+                }elseif ($promocion['tipo'] == 3) { // 4x3
+					$cantidadProductos = count($productos);
+
+					$productosConDescuento = floor($cantidadProductos / 4); // Cada 4 productos, uno es gratis
+					
+					for ($i = 0; $i < $productosConDescuento; $i++) { 
+						$producto1 = $productos[$i * 4];
+						$producto2 = $productos[$i * 4 + 1];
+						$producto3 = $productos[$i * 4 + 2];
+						$producto4 = $productos[$i * 4 + 3];
+					
+					
+						if ($promocion['aplicabilidad'] == 1) {
+							// Se descuenta la mitad de la suma de los tres productos
+							//$descuento = ($producto1['precio'] + $producto2['precio'] + $producto3['precio'] + $producto4['precio']) / 2;
+							$total = ($producto1['precio'] + $producto2['precio'] + $producto3['precio'] + $producto4['precio']);
+							$totalDividido = ($total) / 4;
+                            $descuento  = $total - $totalDividido;
+							$_SESSION['promocionesCarrito'][] = [
+								'titulo' => "Descuento 4x3 ".$i,
+								'monto' => $descuento,
+								'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+							];
+							
+							$_SESSION['totalDescPromos'] += $descuento;
+
+						} elseif ($promocion['aplicabilidad'] == 2) {
+							// Se descuenta el precio del producto de menor valor
+							$minPrecio = min($producto1['precio'], $producto2['precio'], $producto3['precio'], $producto4['precio']);
+							if ($producto1['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} elseif ($producto3['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto3['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto4['precio'];
+
+							}
+						} elseif ($promocion['aplicabilidad'] == 3) {
+							// Se descuenta el precio del producto de mayor valor
+							$maxPrecio = max($producto1['precio'], $producto2['precio'], $producto3['precio'], $producto4['precio']);
+							if ($producto1['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} elseif ($producto3['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto4['precio'];
+
+							}
+						}
+					
+						// // Actualizar los productos en el array original
+						// $productos[$i * 3] = $producto1;
+						// $productos[$i * 3 + 1] = $producto2;
+						// $productos[$i * 3 + 2] = $producto3;
+					}
+                }elseif ($promocion['tipo'] == 4) { // 4x2
+					$cantidadProductos = count($productos);
+
+                    $productosConDescuento = floor($cantidadProductos / 4); // Cada 2 productos, uno es gratis
+
+					
+					for ($i = 0; $i < $productosConDescuento; $i++) { 
+						$producto1 = $productos[$i * 4];
+						$producto2 = $productos[$i * 4 + 1];
+						$producto3 = $productos[$i * 4 + 2];
+						$producto4 = $productos[$i * 4 + 3];
+					
+					
+						if ($promocion['aplicabilidad'] == 1) {
+							// Se descuenta la mitad de la suma de los tres productos
+							$descuento = ($producto1['precio'] + $producto2['precio'] + $producto3['precio'] + $producto4['precio']) / 2;
+							$_SESSION['promocionesCarrito'][] = [
+								'titulo' => "Descuento 4x2 ".$i,
+								'monto' => $descuento,
+								'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+							];
+							
+							$_SESSION['totalDescPromos'] += $descuento;
+
+						} elseif ($promocion['aplicabilidad'] == 2) {
+							// Se descuenta el precio del producto de menor valor
+							$minPrecio = min($producto1['precio'], $producto2['precio'], $producto3['precio'], $producto4['precio']);
+							if ($producto1['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} elseif ($producto3['precio'] == $minPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio']
+								];
+								$_SESSION['totalDescPromos'] += $producto3['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto4['precio'];
+
+							}
+						} elseif ($promocion['aplicabilidad'] == 3) {
+							// Se descuenta el precio del producto de mayor valor
+							$maxPrecio = max($producto1['precio'], $producto2['precio'], $producto3['precio'], $producto4['precio']);
+							if ($producto1['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto1['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto1['precio'];
+
+							} elseif ($producto2['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto2['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} elseif ($producto3['precio'] == $maxPrecio) {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto2['precio'];
+
+							} else {
+								$_SESSION['promocionesCarrito'][] = [
+									'titulo' => "Descuento 4x3 ".$i,
+									'monto' => $producto3['precio'],
+									'promocion' => $_SESSION['arrCarrito'][$i]['promocion']['idpromocion'],
+								'productoPromocion' => $_SESSION['arrCarrito'][$i]['idproducto']
+								];
+								$_SESSION['totalDescPromos'] += $producto4['precio'];
+
+							}
+						}
+					
+					}
+			}
+		}
+
+		
+
+		
+
+		// 	dep($_SESSION);die;
+		// 	foreach ($promociones as $promocionData) {
+		// 		$productos = $promocionData['productos'];
+		// 		$promocion = $promocionData['promocion'];
+		// 		$cantidadProductos = count($productos);
+				
+		// 		// Verificar condiciones de la promoción
+		// 		if ($promocion['minimo_compra'] > 0 && $total < $promocion['minimo_compra']) {
+		// 			$error = "Mínimo de compra no superado para la promoción";
+		// 		}
+		// 		if ($promocion['limite_cantidad_usos'] <= 0) {
+		// 			$error = "La promoción ya no se encuentra vigente";
+		// 		}
+		// 		if ($promocion['limite_fecha_hasta'] < date('Y-m-d H:i:s')) {
+		// 			$error = "La promoción ya no se encuentra vigente";
+		// 		}
+		
+		// 		// Si no hay errores, aplicar la promoción
+		// 		if ($error == null) {
+		// 			if ($promocion['tipo'] == 1) { // Ejemplo: 2x1, 3x2, 4x3
+		// 				$aplicabilidad = $promocion['aplicabilidad'];
+		// 				if ($cantidadProductos >= $aplicabilidad) {
+		// 					$productosParaPromocion = floor($cantidadProductos / $aplicabilidad) * ($aplicabilidad - 1);
+		// 					$totalMontoPromocion = 0;
+		// 					for ($j = 0; $j < $productosParaPromocion; $j++) {
+		// 						$totalMontoPromocion += $productos[$j]['precio'];
+		// 					}
+		// 					$promedioDescuento = $totalMontoPromocion / $productosParaPromocion;
+		// 					$_SESSION['descuentosCarrito']['promociones_aplicadas'][] = [
+		// 						'titulo' => $promocion['titulo'],
+		// 						'monto' => $promedioDescuento
+		// 					];
+		
+		// 					// Ajustar precios
+		// 					for ($j = 0; $j < $productosParaPromocion; $j++) {
+		// 						$_SESSION['arrCarrito'][$j]['precio'] -= $promedioDescuento;
+		// 					}
+		// 				}
+		// 			} elseif ($promocion['tipo'] == 2) {
+		// 				// Otra lógica para otras promociones (porcentaje, envío gratis, etc.)
+		// 				// ...
+		// 			} elseif ($promocion['tipo'] == 3) {
+		// 				$_SESSION['descuentosCarrito']['envio'] = true;
+		// 			}
+		// 		}
+		// 	}
+		// 		 dep($_SESSION['arrCarrito']);die;
+
+
+		 }
+		 public function getEnvio(int $envio)
+		 {
+ 
+					 $this->con = new Mysql();
+ 
+			
+			 $this->intIdEnvio = $envio;
+			 $sql = "SELECT idtipoenvio, nombre,descripcion FROM tipoenvio WHERE idtipoenvio = $this->intIdEnvio";
+			 $request = $this->con->select_all($sql);
+			 return $request;
+		 }
 }
 
  ?>

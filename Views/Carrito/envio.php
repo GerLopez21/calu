@@ -124,15 +124,15 @@ Sólo se aceptan cambios por fallas, las mismas deben ser reportadas inmediatame
 									<label  class="span-check-local" >
 										
 									<!--	<i class="zmdi zmdi-local-store"></i> -->
-                                            
 
-										<span style="font-family:Montserrat-Medium; font-size:14px; text-align: center;"><b><input style="display:inline;" type="checkbox" class="opcionEnvio"  id="retirolocal" name="retirolocal" value=<?= $data['tipo_envios'][$i]['idtipoenvio'] ?>>
+										<span style="font-family:Poppins-Medium; font-size:14px; text-align: center;"><b><input style="display:inline;" type="checkbox" class="opcionEnvio"  id="retirolocal" name="retirolocal" value=<?= $data['tipo_envios'][$i]['idtipoenvio'] ?>>
 										<?= $data['tipo_envios'][$i]['nombre']?></b></span>
 										<br>
-										<span style="font-family:Montserrat-Regular;display:flex;cursor:pointer;">       <?= $data['tipo_envios'][$i]['descripcion']?> </span>
+										<span style="font-family:Poppins-Medium;display:flex;cursor:pointer;">       <?= $data['tipo_envios'][$i]['descripcion']?> </span>
 									</label>
 						</div>
 														<br>
+						<div id="containerFilasEnvio" class="disp"></div>
 
 						<?php } ?>
 								

@@ -234,17 +234,15 @@
                 $fotoreferencia=$_POST['fotoreferencia'];
 				$idproducto = openssl_decrypt($_POST['id'], METHODENCRIPT, KEY);
 				$cantidad = $_POST['cant'];
-				$talle = $_POST['talle'];
-				$color = $_POST['color'];
+				$idtalle = $_POST['talle'];
+				$idcolor = $_POST['color'];
                 $flag_error = false;
-				dep($_POST);die;
-				if($talle != "null"){
+				if($idtalle != "null"){
 
-				    $idtalle = $this->getIdTalle($talle);
+				    $talle = $this->getNombreTalle($idtalle);
 				}
-
-				if($color != "null"){
-				$idcolor = $this->getIdColor($color);
+				if($idcolor != "null"){
+				$color = $this->getNombreColor($idcolor);
 				    
 				}
 
@@ -1196,6 +1194,27 @@
             }
             file_put_contents("text.txt", $hola);
 		}
+		public function getEnvioSelected($envio){
+		
+			$requestEnvio = $this->getEnvio($envio);
+
+			$arrGeneral = null;
+			for ($i=0; $i < count($requestEnvio); $i++) {
+
+								
+				$arrData[$i]['nombre'] = $requestEnvio[$i]['nombre'];
+				$arrData[$i]['idtipoenvio'] = $requestEnvio[$i]['idtipoenvio'];
+				$arrData[$i]['descripcion'] = $requestEnvio[$i]['descripcion'];
+
+				$arrResponse = array("status" => true);
+				$arrGeneral[$i] = $arrData[$i];
+
+						//	$arrData = $arrData[0];
+
+			  }
+			echo json_encode($arrGeneral,JSON_UNESCAPED_UNICODE);
+
+		 }
 
 	}
 
